@@ -5,7 +5,7 @@ const serviceAccount = require("./serviceAccountKey.json");
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: "dibbz-5dc9d.appspot.com"
+    storageBucket: "dibbz-android-3af82.firebasestorage.app"
   });
 }
 

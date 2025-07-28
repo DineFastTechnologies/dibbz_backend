@@ -31,6 +31,8 @@ router.get('/:userId', async (req, res) => {
         phoneNumber: authUser.phoneNumber || '',
         profileImageUrl: authUser.photoURL || '',
         bio: '',
+        role: 'customer', // Default role for new users
+        likedRestaurantIds: [], // Initialize liked restaurants for new users
         createdAt: req.admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: req.admin.firestore.FieldValue.serverTimestamp(),
       };
@@ -183,7 +185,7 @@ router.delete('/:userId', async (req, res) => {
     }
 });
 
-// --- ADDED: Endpoints for User's Saved Locations ---
+// --- User's Saved Locations Endpoints ---
 
 // 5. GET All User Saved Locations
 // Endpoint: GET /api/users/:userId/locations
@@ -215,13 +217,11 @@ router.post('/:userId/locations', async (req, res) => {
     return res.status(403).send('Forbidden: You can only add locations to your own profile.');
   }
 
-  // --- MODIFIED: Added 'category' to destructuring ---
-  const { name, address, latitude, longitude, isDefault = false, category = 'Others' } = req.body;
+  const { name, address, latitude, longitude, isDefault = false, category = 'Others', pincode, city, state, village } = req.body;
 
   if (!name || !address || latitude == null || longitude == null) {
     return res.status(400).send('Missing required location fields: name, address, latitude, longitude.');
   }
-  // --- ADDED: Basic validation for category ---
   const validCategories = ["Home", "Work", "Friends and Family", "Others"];
   if (!validCategories.includes(category)) {
       return res.status(400).send('Invalid category provided. Must be one of: Home, Work, Friends and Family, Others.');
@@ -235,12 +235,15 @@ router.post('/:userId/locations', async (req, res) => {
       latitude,
       longitude,
       isDefault,
-      category, // <-- ADDED: Store the category
+      category,
+      pincode: pincode || null, // Store explicit pincode
+      city: city || null,       // Store explicit city
+      state: state || null,     // Store explicit state
+      village: village || null, // Store explicit village
       createdAt: req.admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: req.admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    // Optional: If isDefault is true, set all other locations to false for this user
     if (isDefault) {
       const existingDefaults = await req.db.collection('users').doc(targetUserId)
                                          .collection('savedLocations')
@@ -263,7 +266,6 @@ router.post('/:userId/locations', async (req, res) => {
 });
 
 // 7. PUT Update a User Saved Location
-// Endpoint: PUT /api/users/:userId/locations/:locationId
 router.put('/:userId/locations/:locationId', async (req, res) => {
   const targetUserId = req.params.userId;
   const authenticatedUserId = req.user.uid;
@@ -273,15 +275,18 @@ router.put('/:userId/locations/:locationId', async (req, res) => {
     return res.status(403).send('Forbidden: You can only update your own locations.');
   }
 
-  // --- MODIFIED: Added 'category' to destructuring ---
-  const { name, address, latitude, longitude, isDefault, category } = req.body;
+  const { name, address, latitude, longitude, isDefault, category, pincode, city, state, village } = req.body;
   const updateData = {};
   if (name !== undefined) updateData.name = name;
   if (address !== undefined) updateData.address = address;
   if (latitude !== undefined) updateData.latitude = latitude;
   if (longitude !== undefined) updateData.longitude = longitude;
   if (isDefault !== undefined) updateData.isDefault = isDefault;
-  if (category !== undefined) { // --- ADDED: Validation for category on update ---
+  if (pincode !== undefined) updateData.pincode = pincode;
+  if (city !== undefined) updateData.city = city;
+  if (state !== undefined) updateData.state = state;
+  if (village !== undefined) updateData.village = village;
+  if (category !== undefined) {
       const validCategories = ["Home", "Work", "Friends and Family", "Others"];
       if (!validCategories.includes(category)) {
           return res.status(400).send('Invalid category provided. Must be one of: Home, Work, Friends and Family, Others.');
@@ -303,16 +308,15 @@ router.put('/:userId/locations/:locationId', async (req, res) => {
 
     await locationRef.update(updateData);
 
-    // If this location is set to default, ensure others are unset
     if (isDefault === true) {
       const existingDefaults = await req.db.collection('users').doc(targetUserId)
                                          .collection('savedLocations')
                                          .where('isDefault', '==', true)
                                          .get();
       const batch = req.db.batch();
-      existingDefaults.docs.forEach(d => {
-        if (d.id !== locationId) {
-          batch.update(d.ref, { isDefault: false });
+      existingDefaults.docs.forEach(doc => {
+        if (doc.id !== locationId) {
+          batch.update(doc.ref, { isDefault: false });
         }
       });
       await batch.commit();
@@ -326,7 +330,6 @@ router.put('/:userId/locations/:locationId', async (req, res) => {
 });
 
 // 8. DELETE a User Saved Location
-// Endpoint: DELETE /api/users/:userId/locations/:locationId
 router.delete('/:userId/locations/:locationId', async (req, res) => {
   const targetUserId = req.params.userId;
   const authenticatedUserId = req.user.uid;
@@ -345,14 +348,14 @@ router.delete('/:userId/locations/:locationId', async (req, res) => {
 
     await locationRef.delete();
     res.status(200).send('Location deleted successfully!');
-  } catch (error) {
+  }
+  catch (error) {
     console.error(`Error deleting location ${locationId} for user ${targetUserId}:`, error);
     res.status(500).send('Failed to delete location.');
   }
 });
 
 // 9. PATCH Set a Location as Primary
-// Endpoint: PATCH /api/users/:userId/locations/:locationId/set-primary
 router.patch('/:userId/locations/:locationId/set-primary', async (req, res) => {
   const targetUserId = req.params.userId;
   const authenticatedUserId = req.user.uid;
@@ -365,7 +368,6 @@ router.patch('/:userId/locations/:locationId/set-primary', async (req, res) => {
   try {
     const userLocationsRef = req.db.collection('users').doc(targetUserId).collection('savedLocations');
 
-    // Check if location exists
     const targetLocRef = userLocationsRef.doc(locationId);
     const targetLocDoc = await targetLocRef.get();
 
@@ -375,7 +377,6 @@ router.patch('/:userId/locations/:locationId/set-primary', async (req, res) => {
 
     const batch = req.db.batch();
 
-    // Set all other locations to isDefault = false
     const existingDefaults = await userLocationsRef.where('isDefault', '==', true).get();
     existingDefaults.docs.forEach(doc => {
       if (doc.id !== locationId) {
@@ -383,7 +384,6 @@ router.patch('/:userId/locations/:locationId/set-primary', async (req, res) => {
       }
     });
 
-    // Set this one to isDefault = true
     batch.update(targetLocRef, {
       isDefault: true,
       updatedAt: req.admin.firestore.FieldValue.serverTimestamp(),
@@ -397,7 +397,6 @@ router.patch('/:userId/locations/:locationId/set-primary', async (req, res) => {
     res.status(500).send('Failed to set primary location.');
   }
 });
-
 
 
 module.exports = router;

@@ -1,7 +1,12 @@
-// src/routes/restaurantRoutes.js
+// routes/restaurantRoutes.js
 const express = require("express");
 const router = express.Router();
+const multer = require('multer');
 
+// MODIFIED: Import authenticate and checkRole directly from the auth middleware file
+const { authenticate, checkRole } = require('../middleware/auth'); 
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const {
   createRestaurant,
@@ -9,32 +14,38 @@ const {
   getRestaurantById,
   updateRestaurant,
   deleteRestaurant,
-  getNearbyRestaurants, // <-- MODIFIED: Add getNearbyRestaurants to imports
+  getNearbyRestaurants,
+  uploadRestaurantImage,
 } = require("../controller/restaurantCRUD");
 
 
-// POST
-router.post("/seed", createRestaurant); // As discussed, this is a seed endpoint
+// POST /restaurant/seed - For initial data seeding (consider removing in production)
+router.post("/seed", createRestaurant);
 
-// GET
+// GET /restaurant - Get all restaurants (publicly accessible)
 router.get("/", getAllRestaurants);
 
-// GET
+// GET /restaurant/:id - Get a single restaurant by ID (publicly accessible)
 router.get("/:id", getRestaurantById);
 
-// --- ADDED: Endpoint for Nearby Restaurants ---
-// Endpoint: GET /restaurant/nearby
-// Purpose: Find restaurants within a geographical bounding box.
-// Query Params: lat (latitude), lng (longitude), radiusKm (optional, default to 10km in controller)
-// Example usage: GET /restaurant/nearby?lat=19.076&lng=72.8777&radiusKm=5
-router.get("/nearby", getNearbyRestaurants); // <-- MODIFIED: New route for nearby search
-// --- END ADDED ---
+// GET /restaurant/nearby - Get nearby restaurants (publicly accessible)
+router.get("/nearby", getNearbyRestaurants);
 
-// PUT
-router.put("/:id", updateRestaurant);
+// --- MODIFIED: PUT /restaurant/:id - Update restaurant (requires owner/admin role) ---
+// Now apply middleware functions directly
+router.put("/:id", authenticate, checkRole('restaurant_owner'), updateRestaurant);
 
-// DELETE
-router.delete("/:id", deleteRestaurant);
+// --- MODIFIED: DELETE /restaurant/:id - Delete restaurant (requires owner/admin role) ---
+// Now apply middleware functions directly
+router.delete("/:id", authenticate, checkRole('restaurant_owner'), deleteRestaurant);
 
+// --- ADDED: POST /restaurant/:id/images - Upload restaurant images (requires owner/admin role) ---
+// Now apply middleware functions directly
+router.post("/:id/images", 
+  authenticate, 
+  checkRole('restaurant_owner'), 
+  upload.single('image'), 
+  uploadRestaurantImage
+);
 
 module.exports = router;

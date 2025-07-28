@@ -1,23 +1,27 @@
 {
-    "id": "rest_002",
-    "name": "The Curry Project",
-    "location": {
-      "address": "55 Indiranagar, Bangalore",
-      "lat": 12.9716,
-      "lng": 77.5946
-    },
-    "cuisine": ["Indian", "Modern Fusion"],
-    "rating": 4.3,
-    "priceLevel": "$$",
-    "openStatus": "open",
-    "tags": ["Trendy", "Family Friendly", "Fusion Flavors"],
-    "contactNumber": "+91-9988776655",
-    "images": [
-      "https://storage.googleapis.com/your-bucket/curry-outdoor.jpg",
-      "https://storage.googleapis.com/your-bucket/curry-dishes.jpg"
-    ],
-    "bannerImage": "https://storage.googleapis.com/your-bucket/curry-banner.jpg",
-    "dineType": "Casual Dine",
-    "createdAt": "2025-07-10T12:00:00Z"
-  }
-  
+  "id": "rest_002",
+  "name": "The Curry Project",
+  "location": {
+    "address": "55 Indiranagar, Bangalore",
+    "lat": 12.9716,
+    "lng": 77.5946
+  },
+  "cuisine": ["Indian", "Modern Fusion"],
+  "rating": 4.3,
+  "priceLevel": "$$",
+  "openStatus": "open",
+  "tags": ["Trendy", "Family Friendly", "Fusion Flavors"],
+  "contactNumber": "+91-9988776655",
+  "images": [
+    "https://www.bkmag.com/wp-content/uploads/2023/02/bkcurryproject-20-2048x1365.jpg",
+    "https://b.zmtcdn.com/data/pictures/chains/9/18774329/acc02f739a06e5b80d070e09ba61f907.jpg?output-format=webp&fit=around|771.75:416.25&crop=771.75:416.25;*,*"
+  ],
+  "bannerImage": "https://static.wixstatic.com/media/3d55d4_b1af3caf46084b838386c1e5c048cfde~mv2.png/v1/fill/w_1905,h_534,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/3d55d4_b1af3caf46084b838386c1e5c048cfde~mv2.png",
+  "dineType": "Casual Dine",
+  "createdAt": "2025-07-10T12:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["Indian", "Fusion", "Spicy", "Biryani"],
+  "ratingSum": 4.3,
+  "reviewCount": 1,
+  "averageRating": 4.3
+}

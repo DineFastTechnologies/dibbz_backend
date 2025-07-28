@@ -1,17 +1,17 @@
 [
-    {
-      "id": "booking_001",
-      "userId": "user_001",
-      "restaurantId": "rest_001",
-      "tableId": "T1",
-      "dateTime": "2024-06-10T19:00:00Z",
-      "preorderedItems": [
-        { "itemId": "item_001", "quantity": 2 },
-        { "itemId": "item_002", "quantity": 1 }
-      ],
-      "subtotal": 850,
-      "discountApplied": 85,
-      "total": 765,
-      "paymentStatus": "50%_paid"
-    }
-  ]
+  {
+    "id": "booking_001",
+    "userId": "user_001",     
+    "restaurantId": "01",    
+    "tableId": "T1",         
+    "partySize": 4,           
+    "bookingDate": "2024-06-10", 
+    "bookingTime": "19:00",  
+    "approxArrivalTime": "19:00", 
+    "status": "confirmed",    
+    "orderId": "order_001",   
+    "specialRequests": "Near window", 
+    "createdAt": "2024-06-09T10:00:00Z", 
+    "updatedAt": "2024-06-09T10:00:00Z"  
+  }
+]

@@ -1,20 +1,36 @@
 [
-    {
-      "id": "user_001",
-      "name": "Amit Sharma",
-      "contactInfo": {
-        "email": "amit@example.com",
-        "phone": "+911234567890"
-      },
-      "bookings": ["booking_001"]
+  {
+    "id": "user_001", 
+    "name": "Amit Sharma",
+    "displayName": "AmitS",             
+    "contactInfo": {
+      "email": "amit@example.com",
+      "phone": "+911234567890"
     },
-    {
-      "id": "user_002",
-      "name": "Priya Singh",
-      "contactInfo": {
-        "email": "priya@example.com",
-        "phone": "+919876543210"
-      },
-      "bookings": []
-    }
-  ]
+    "bio": "Passionate about Indian cuisine.", 
+    "profileImageUrl": "https://storage.googleapis.com/dibbz-5dc9d.appspot.com/users/user_001/profile_pictures/amit.jpg", 
+    "role": "restaurant_owner",          
+    "ownedRestaurantId": "01",         
+    "likedRestaurantIds": [],           
+    "bookings": ["booking_001"],        
+    "createdAt": "2024-01-01T10:00:00Z", 
+    "updatedAt": "2024-01-01T10:00:00Z"  
+  },
+  {
+    "id": "user_002", 
+    "name": "Priya Singh",
+    "displayName": "PriyaS",            
+    "contactInfo": {
+      "email": "priya@example.com",
+      "phone": "+919876543210"
+    },
+    "bio": "Loves exploring new cafes.", 
+    "profileImageUrl": "https://storage.googleapis.com/dibbz-5dc9d.appspot.com/users/user_002/profile_pictures/priya.jpg", 
+    "role": "customer",                 
+    "ownedRestaurantId": null,          
+    "likedRestaurantIds": [],           
+    "bookings": [],                     
+    "createdAt": "2024-01-15T11:30:00Z", 
+    "updatedAt": "2024-01-15T11:30:00Z"  
+  }
+]

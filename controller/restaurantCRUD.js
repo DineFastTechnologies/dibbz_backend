@@ -1,29 +1,58 @@
 // src/controller/restaurantCRUD.js
-const { v4: uuidv4 } = require("uuid"); // Ensure uuidv4 is imported if used elsewhere
-const { admin, db } = require("../firebase"); // Ensure 'admin' is imported here as well for Firestore.FieldValue
+const { v4: uuidv4 } = require("uuid"); 
+// MODIFIED: Import admin, db, and bucket directly from the firebase.js file
+const { admin, db, bucket } = require("../firebase"); 
 
-const restaurantSample = require("../data/restaurants/01/details.json"); // This import might be removed later if createRestaurant is repurposed
+const restaurantSample = require("../data/restaurants/01/details.json"); 
 const restaurantCollection = db.collection("restaurants");
 
 
-// CREATE (Seeding function - will be refined later)
-// Note: As discussed, this function (and its route /restaurant/seed) duplicates seeding logic.
-// We will refine this later to be a proper API endpoint for creating a *single* restaurant
-// or remove it if seedAll.js is the only intended seeding mechanism.
+// Helper function to check if the authenticated user owns the target restaurant
+// MODIFIED: Uses directly imported 'db' and 'admin'
+const checkRestaurantOwnership = async (req, res, restaurantId) => {
+  const authenticatedUserId = req.user.uid;
+
+  try {
+    const userDoc = await db.collection('users').doc(authenticatedUserId).get(); // Use directly imported 'db'
+    if (!userDoc.exists) {
+      res.status(403).send('Forbidden: User profile not found.');
+      return false;
+    }
+    const userRole = userDoc.data()?.role;
+    const userOwnedRestaurantId = userDoc.data()?.ownedRestaurantId;
+
+    if (userRole === 'admin') { 
+        return true;
+    }
+    if (userRole === 'restaurant_owner' && userOwnedRestaurantId === restaurantId) {
+        return true;
+    }
+
+    res.status(403).send('Forbidden: You do not own this restaurant or lack permissions.');
+    return false;
+  } catch (error) {
+    console.error('Error checking restaurant ownership:', error);
+    res.status(500).send('Server error during ownership check.');
+    return false;
+  }
+};
+
+
+// CREATE (Seeding function)
+// MODIFIED: Uses directly imported 'db'
 const createRestaurant = async (req, res) => {
   try {
-    const data = require("../data/restaurants/01/details.json"); // This line re-reads the JSON
-    const restaurants = data.restaurants; // Assuming data.restaurants exists in the JSON
-    const batch = db.batch();
+    const data = require("../data/restaurants/01/details.json");
+    const restaurants = data.restaurants;
+    const batch = db.batch(); // Use directly imported 'db'
 
     restaurants.forEach((restaurant) => {
-      const id = uuidv4(); // Generates a new ID, overriding the 'id' in the JSON if any
+      const id = uuidv4();
       const docRef = restaurantCollection.doc(id);
       batch.set(docRef, { ...restaurant, id });
     });
 
     await batch.commit();
-
     res.status(201).send({ message: "Seeded restaurant data successfully." });
   } catch (error) {
     console.error("Seeding error:", error);
@@ -32,19 +61,55 @@ const createRestaurant = async (req, res) => {
 };
 
 
-// READ (All)
+// READ (All Restaurants)
+// MODIFIED: Uses directly imported 'db'
 const getAllRestaurants = async (req, res) => {
   try {
-    const snapshot = await restaurantCollection.get();
-    const restaurants = [];
+    let query = restaurantCollection; // restaurantCollection uses 'db' from its declaration
+
+    const { isPureVeg, foodCategory, lat, lng, radiusKm } = req.query;
+
+    if (isPureVeg === 'true') {
+      query = query.where("isPureVeg", "==", true);
+    }
+
+    if (foodCategory) {
+      query = query.where("foodCategories", "array-contains", foodCategory);
+    }
+
+    let restaurants = [];
+    if (lat && lng && radiusKm) {
+        const latitude = parseFloat(lat);
+        const longitude = parseFloat(lng);
+        const radius = parseFloat(radiusKm);
+
+        if (isNaN(latitude) || isNaN(longitude) || isNaN(radius)) {
+            return res.status(400).send('Invalid latitude, longitude, or radius for nearby filter.');
+        }
+        const { minLat, maxLat, minLng, maxLng } = getBoundingBox(latitude, longitude, radius);
+
+        const snapshot = await query.where("location.lat", ">=", minLat).where("location.lat", "<=", maxLat).get();
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.location.lng >= minLng && data.location.lng <= maxLng) {
+                restaurants.push({ id: doc.id, ...data });
+            }
+        });
+        res.status(200).json(restaurants);
+        return;
+    }
+
+    const snapshot = await query.get();
+    restaurants = [];
 
     snapshot.forEach((doc) => {
-      restaurants.push({ id: doc.id, ...doc.data() }); // Include doc.id in the response
+      restaurants.push({ id: doc.id, ...doc.data() });
     });
 
     res.status(200).json(restaurants);
   } catch (error) {
-    console.error("Read Error:", error);
+    console.error("Read All Restaurants Error:", error);
     res.status(500).send("Failed to fetch restaurants");
   }
 };
@@ -53,61 +118,98 @@ const getAllRestaurants = async (req, res) => {
 const getRestaurantById = async (req, res) => {
   try {
     const id = req.params.id;
-    const doc = await restaurantCollection.doc(id).get();
+    const doc = await restaurantCollection.doc(id).get(); // restaurantCollection uses 'db'
 
     if (!doc.exists) {
       return res.status(404).send("Restaurant not found");
     }
 
-    res.status(200).json({ id: doc.id, ...doc.data() }); // Include doc.id in the response
+    res.status(200).json({ id: doc.id, ...doc.data() });
   } catch (error) {
-    console.error("Fetch One Error:", error);
+    console.error("Fetch One Restaurant Error:", error);
     res.status(500).send("Failed to fetch restaurant");
   }
 };
 
 
-// UPDATE
+// UPDATE Restaurant (Protected)
+// MODIFIED: Uses directly imported 'admin' and 'db'
 const updateRestaurant = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const data = req.body;
+  const id = req.params.id;
+  if (!await checkRestaurantOwnership(req, res, id)) return;
 
-    if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      return res.status(400).send("Invalid update data");
+  const data = req.body;
+
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return res.status(400).send("Invalid update data");
+  }
+
+  const allowedFields = [
+    'name', 'location', 'cuisine', 'rating', 'priceLevel', 'openStatus',
+    'tags', 'contactNumber', 'bannerImage', 'dineType', 'isPureVeg', 'foodCategories', 'images'
+  ];
+  const filteredData = {};
+  for (const key of allowedFields) {
+    if (data[key] !== undefined) {
+      filteredData[key] = data[key];
     }
-    await restaurantCollection.doc(id).update(data);
-    res.status(200).send("Restaurant updated");
-  } catch (error) {
-    console.error("Update Error:", error);
-    res.status(500).send("Failed to update restaurant");
   }
-};
+  filteredData.updatedAt = admin.firestore.FieldValue.serverTimestamp(); // Use directly imported 'admin'
 
+  if (Object.keys(filteredData).length <= 1 && filteredData.updatedAt) {
+    return res.status(400).send('No relevant restaurant data provided for update.');
+  }
 
-// DELETE
-const deleteRestaurant = async (req, res) => {
   try {
-    const id = req.params.id;
-    await restaurantCollection.doc(id).delete();
-    res.status(200).send("Restaurant deleted");
+    await restaurantCollection.doc(id).update(filteredData); // restaurantCollection uses 'db'
+    res.status(200).send("Restaurant updated successfully.");
   } catch (error) {
-    console.error("Delete Error:", error);
-    res.status(500).send("Failed to delete restaurant");
+    console.error("Update Restaurant Error:", error);
+    res.status(500).send("Failed to update restaurant.");
   }
 };
 
 
-// --- ADDED: Helper for rough geographical bounding box calculation ---
-// This function calculates a square (bounding box) around a given point,
-// which is used to perform range queries on latitude and longitude in Firestore.
-// It's an approximation for 'nearby' and is not a true circular radius search.
-function getBoundingBox(latitude, longitude, radiusKm) {
-  const earthRadiusKm = 6371; // Radius of the Earth in kilometers
+// DELETE Restaurant (Protected)
+// MODIFIED: Uses directly imported 'db' and 'bucket'
+const deleteRestaurant = async (req, res) => {
+  const id = req.params.id;
+  if (!await checkRestaurantOwnership(req, res, id)) return;
 
-  // Calculate approximate degrees for a given radius
-  const latDelta = radiusKm / earthRadiusKm * (180 / Math.PI); // Degrees of latitude per km
-  // Longitude delta depends on latitude (gets larger near poles)
+  try {
+    // Delete all menu items and tables subcollections first
+    const menuItemsSnapshot = await db.collection('restaurants').doc(id).collection('menuItems').get(); // Use directly imported 'db'
+    const menuBatch = db.batch();
+    menuItemsSnapshot.docs.forEach(doc => menuBatch.delete(doc.ref));
+    await menuBatch.commit();
+
+    const tablesSnapshot = await db.collection('restaurants').doc(id).collection('tables').get(); // Use directly imported 'db'
+    const tableBatch = db.batch();
+    tablesSnapshot.docs.forEach(doc => tableBatch.delete(doc.ref));
+    await tableBatch.commit();
+
+    // Delete associated images from Cloud Storage
+    const imagePrefix = `restaurants/${id}/images/`;
+    const [files] = await bucket.getFiles({ prefix: imagePrefix }); // Use directly imported 'bucket'
+    if (files.length > 0) {
+      await Promise.all(files.map(file => file.delete()));
+      console.log(`Deleted ${files.length} images for restaurant ${id} from Cloud Storage.`);
+    }
+
+    await restaurantCollection.doc(id).delete(); // restaurantCollection uses 'db'
+    res.status(200).send("Restaurant deleted successfully.");
+  } catch (error) {
+    console.error("Delete Restaurant Error:", error);
+    res.status(500).send("Failed to delete restaurant.");
+  }
+};
+
+
+// Helper for rough geographical bounding box calculation
+function getBoundingBox(latitude, longitude, radiusKm) {
+  const earthRadiusKm = 6371;
+
+  const latDelta = radiusKm / earthRadiusKm * (180 / Math.PI);
   const lngDelta = radiusKm / (earthRadiusKm * Math.cos(latitude * Math.PI / 180)) * (180 / Math.PI);
 
   const minLat = latitude - latDelta;
@@ -118,12 +220,10 @@ function getBoundingBox(latitude, longitude, radiusKm) {
   return { minLat, maxLat, minLng, maxLng };
 }
 
-// --- ADDED: READ (Nearby Restaurants) ---
-// Endpoint: GET /restaurant/nearby
-// Purpose: Fetch restaurants within a geographical bounding box defined by lat/lng and radius.
-// Query Params: lat (latitude of center), lng (longitude of center), radiusKm (radius in kilometers)
+// READ (Nearby Restaurants)
+// MODIFIED: Uses directly imported 'db'
 const getNearbyRestaurants = async (req, res) => {
-  const { lat, lng, radiusKm = 10 } = req.query; // Default radius 10km if not provided
+  const { lat, lng, radiusKm = 10 } = req.query;
 
   if (lat == null || lng == null) {
     return res.status(400).send('Latitude and Longitude are required for nearby search.');
@@ -140,13 +240,7 @@ const getNearbyRestaurants = async (req, res) => {
   try {
     const { minLat, maxLat, minLng, maxLng } = getBoundingBox(latitude, longitude, radius);
 
-    // Firestore query for a rectangular bounding box
-    // IMPORTANT LIMITATION: Firestore can only perform one range query (e.g., '>=' and '<=')
-    // on a single field per query. This means you can't filter by both latitude and longitude
-    // ranges efficiently in one Firestore query for a square.
-    // For a simple square filter, we will query by latitude range first, then filter by longitude in memory.
-    // For production-grade circular geospatial queries, consider GeoFirestore or a dedicated search service (e.g., Algolia).
-    const snapshot = await restaurantCollection
+    const snapshot = await restaurantCollection // restaurantCollection uses 'db'
       .where("location.lat", ">=", minLat)
       .where("location.lat", "<=", maxLat)
       .get();
@@ -154,8 +248,6 @@ const getNearbyRestaurants = async (req, res) => {
     const restaurants = [];
     snapshot.forEach((doc) => {
         const data = doc.data();
-        // Post-filter by longitude to complete the bounding box.
-        // This is necessary because Firestore can't directly query two range fields in one query.
         if (data.location.lng >= minLng && data.location.lng <= maxLng) {
             restaurants.push({ id: doc.id, ...data });
         }
@@ -169,6 +261,48 @@ const getNearbyRestaurants = async (req, res) => {
 };
 
 
+// Upload Restaurant Image (Protected)
+// MODIFIED: Uses directly imported 'admin', 'db', and 'bucket'
+const uploadRestaurantImage = async (req, res) => {
+  const restaurantId = req.params.id;
+  if (!await checkRestaurantOwnership(req, res, restaurantId)) return;
+
+  if (!req.file) {
+    return res.status(400).send('No image file provided.');
+  }
+
+  const fileBuffer = req.file.buffer;
+  const originalName = req.file.originalname;
+  const contentType = req.file.mimetype;
+  const fileName = `restaurant_${restaurantId}_${Date.now()}_${originalName.replace(/\s/g, '_')}`;
+  const destinationPath = `restaurants/${restaurantId}/images/${fileName}`;
+
+  const file = bucket.file(destinationPath); // Use directly imported 'bucket'
+
+  try {
+    await file.save(fileBuffer, {
+      metadata: { contentType: contentType },
+      public: true
+    });
+
+    const imageUrl = `https://storage.googleapis.com/${bucket.name}/${destinationPath}`;
+
+    await restaurantCollection.doc(restaurantId).update({ // restaurantCollection uses 'db'
+      images: admin.firestore.FieldValue.arrayUnion(imageUrl), // Use directly imported 'admin'
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly imported 'admin'
+    });
+
+    res.status(200).json({
+      message: 'Restaurant image uploaded successfully!',
+      url: imageUrl,
+    });
+  } catch (error) {
+    console.error(`Error uploading image for restaurant ${restaurantId}:`, error);
+    res.status(500).send('Failed to upload restaurant image.');
+  }
+};
+
+
 // EXPORTING ALL CONTROLLERS
 module.exports = {
   createRestaurant,
@@ -176,5 +310,6 @@ module.exports = {
   getRestaurantById,
   updateRestaurant,
   deleteRestaurant,
-  getNearbyRestaurants, // <-- MODIFIED: Add getNearbyRestaurants to the exports
+  getNearbyRestaurants,
+  uploadRestaurantImage,
 };

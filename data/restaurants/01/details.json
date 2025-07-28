@@ -1,23 +1,26 @@
-
 {
-    "name": "Cafe De Flora",
-    "location": {
-      "address": "123 MG Road, Mumbai",
-      "lat": 19.076,
-      "lng": 72.8777
-    },
-    "cuisine": ["Italian", "Continental"],
-    "rating": 4.5,
-    "priceLevel": "$$",
-    "openStatus": "open",
-    "tags": ["Vibe Dining", "Romantic", "Live Music"],
-    "contactNumber": "+91-9876543210",
-    "images": [
-      "https://storage.googleapis.com/your-bucket/cafe-banner.jpg",
-      "https://storage.googleapis.com/your-bucket/cafe-inside.jpg"
-    ],
-    "bannerImage": "https://storage.googleapis.com/your-bucket/banner.jpg",
-    "dineType": "Fine Dine",
-    "createdAt": "2025-07-01T08:00:00Z"
-  }
-  
+  "name": "Cafe De Flora",
+  "location": {
+    "address": "123 MG Road, Mumbai",
+    "lat": 19.076,
+    "lng": 72.8777
+  },
+  "cuisine": ["Italian", "Continental"],
+  "rating": 4.5,
+  "priceLevel": "$$",
+  "openStatus": "open",
+  "tags": ["Vibe Dining", "Romantic", "Live Music"],
+  "contactNumber": "+91-9876543210",
+  "images": [
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/a8/b0/9c/le-cafe-de-flore-172.jpg",
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/16/f9/bf/2b/petit-dejeuner.jpg"
+  ],
+  "bannerImage": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/16/f9/bf/29/profiteroles-au-chocolat.jpg",
+  "dineType": "Fine Dine",
+  "createdAt": "2025-07-01T08:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["Italian", "Continental", "Coffee", "Dessert"],
+  "ratingSum": 4.5,
+  "reviewCount": 1,
+  "averageRating": 4.5
+}

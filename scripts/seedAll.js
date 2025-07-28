@@ -37,7 +37,7 @@ async function seedRestaurants() {
   let seededRestaurantCount = 0;
   let seededMenuItemCount = 0;
 
-  Object.entries(restaurants).forEach(([folderId, details]) => { // Renamed 'id' to 'folderId' for clarity
+  Object.entries(restaurants).forEach(([folderId, details]) => { // 'folderId' here is "01", "02"
     // --- ADDED LOGS ---
     console.log(`[seedRestaurants] Processing restaurant folder ID: ${folderId}`);
     // --- END ADDED LOGS ---
@@ -46,8 +46,10 @@ async function seedRestaurants() {
       console.warn(`[seedRestaurants] Skipping restaurant directory ${folderId}: No details.json or missing 'id' field in details.`);
       return; 
     }
-    const docId = details.details.id; // Use the 'id' field from the JSON details as the Firestore Document ID
-    const docRef = db.collection('restaurants').doc(docId); 
+    // --- CRITICAL CORRECTION HERE ---
+    const docId = details.details.id; // <-- THIS IS THE LINE TO CHANGE: Use the 'id' field from the JSON details
+    const docRef = db.collection('restaurants').doc(docId); // <-- Use docId for Firestore document ID
+    // --- END CRITICAL CORRECTION ---
 
     // --- ADDED LOGS ---
     console.log(`[seedRestaurants] Preparing to seed restaurant document with Firestore ID: "${docId}" from folder "${folderId}"`);
@@ -98,7 +100,6 @@ async function seedUsers() {
         ...user,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        // Add default fields if not present in JSON, and adjust to match users.js model
         displayName: user.displayName || user.name.split(' ')[0],
         profileImageUrl: user.profileImageUrl || '',
         bio: user.bio || '',

@@ -3,5 +3,6 @@
     "name": "Paneer Tikka",
     "description": "Grilled paneer with spices.",
     "price": 250,
-    "photo": "https://www.cookwithmanali.com/wp-content/uploads/2015/07/Restaurant-Style-Recipe-Paneer-Tikka.jpg"
+    "photo": "https://www.cookwithmanali.com/wp-content/uploads/2015/07/Restaurant-Style-Recipe-Paneer-Tikka.jpg",
+    "category": "Appetizers"
   }

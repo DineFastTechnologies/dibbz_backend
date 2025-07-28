@@ -3,5 +3,6 @@
     "name": "Caesar Salad",
     "description": "Classic salad with lettuce and dressing.",
     "price": 140,
-    "photo": "https://media.chefdehome.com/740/0/0/caesar/classic-caesar-salad.jpg"
+    "photo": "https://media.chefdehome.com/740/0/0/caesar/classic-caesar-salad.jpg",
+    "category": "Salads"
   }

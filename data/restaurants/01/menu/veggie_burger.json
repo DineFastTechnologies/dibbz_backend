@@ -3,5 +3,6 @@
     "name": "Veggie Burger",
     "description": "Loaded with fresh veggies and cheese.",
     "price": 180,
-    "photo": "https://www.inspiredtaste.net/wp-content/uploads/2018/05/Homemade-Mushroom-Veggie-Burger-Recipe-1-1200.jpg"
+    "photo": "https://www.inspiredtaste.net/wp-content/uploads/2018/05/Homemade-Mushroom-Veggie-Burger-Recipe-1-1200.jpg",
+    "category": "Burgers"
   }

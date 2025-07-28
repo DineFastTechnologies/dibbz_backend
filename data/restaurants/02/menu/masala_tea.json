@@ -3,5 +3,6 @@
     "name": "Masala Tea",
     "description": "Spiced Indian tea.",
     "price": 50,
-    "photo": "https://www.thespicehouse.com/cdn/shop/articles/Chai_Masala_Tea_720x.jpg?v=1606936195"
+    "photo": "https://www.thespicehouse.com/cdn/shop/articles/Chai_Masala_Tea_720x.jpg?v=1606936195",
+    "category": "Beverages"
   }

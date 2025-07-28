@@ -9,7 +9,7 @@ console.log("--- Starting Isolated Firestore Query Test ---");
 console.log(`Test Script: Firebase Admin SDK initialized for Project ID: ${admin.app().options.projectId}`);
 
 async function testQuery() {
-    const restaurantId = "01"; // The specific restaurant ID we are having trouble with
+    const restaurantId = "rest_001"; // The specific restaurant ID we are having trouble with
 
     console.log(`Test Script: Attempting to query menu items for restaurant ID: "${restaurantId}"`);
 

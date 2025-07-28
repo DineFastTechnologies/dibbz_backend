@@ -3,5 +3,6 @@
     "name": "Garlic Naan",
     "description": "Soft naan topped with garlic.",
     "price": 60,
-    "photo": "https://www.cookwithmanali.com/wp-content/uploads/2018/09/Garlic-Naan.jpg"
+    "photo": "https://www.cookwithmanali.com/wp-content/uploads/2018/09/Garlic-Naan.jpg",
+    "category": "Breads"
   }

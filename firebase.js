@@ -46,7 +46,6 @@ try {
 }
 
 
-// Initialize Firebase Admin SDK only once
 if (!admin.apps.length) {
   console.log(`[Firebase Init] Attempting to initialize Firebase Admin SDK for project ${PROJECT_ID}...`);
   try {
@@ -59,7 +58,6 @@ if (!admin.apps.length) {
   } catch (e) {
     console.error(`[Firebase Init] ERROR: Failed to initialize Firebase Admin SDK. Error: ${e.message}`);
     console.error(`[Firebase Init] This could be due to invalid credentials, network issues, or misconfigured project settings.`);
-    // Force process exit to ensure Vercel captures a crash log
     process.exit(1); 
   }
 } else {

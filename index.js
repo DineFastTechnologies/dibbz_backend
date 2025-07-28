@@ -1,27 +1,40 @@
 // index.js
+
+// --- ADDED LOG ---
+console.log("INDEX.JS: Starting application initialization sequence..."); 
+// --- END ADDED LOG ---
+
 const express = require("express");
 const cors = require("cors");
-// REMOVED: Direct import of admin, db, bucket here.
-// They will be imported directly by controller/middleware files that need them.
-require("dotenv").config(); // Loads environment variables from .env file
+
+// CORRECTED PATH: Firebase initialization import
+console.log("INDEX.JS: Attempting to import Firebase config.");
+const { admin, db, bucket } = require("./firebase"); 
+console.log("INDEX.JS: Firebase config imported. Admin defined:", !!admin, "DB defined:", !!db, "Bucket defined:", !!bucket);
+
+require("dotenv").config(); 
+console.log("INDEX.JS: Dotenv loaded.");
 
 // --- Middleware Imports ---
-// Import authenticate and checkRole directly from the middleware/auth.js file
+console.log("INDEX.JS: Attempting to import auth middleware.");
 const { authenticate, checkRole } = require("./middleware/auth"); 
+console.log("INDEX.JS: Auth middleware imported. Authenticate defined:", typeof authenticate, "CheckRole defined:", typeof checkRole);
+
 
 const app = express();
+console.log("INDEX.JS: Express app created.");
 
 // --- Core Express Middleware ---
-app.use(cors()); // Enables Cross-Origin Resource Sharing
-app.use(express.json()); // Parses incoming JSON request bodies
-app.use(express.urlencoded({ extended: true })); // Parses URL-encoded request bodies
+app.use(cors()); 
+console.log("INDEX.JS: CORS middleware applied.");
+app.use(express.json()); 
+console.log("INDEX.JS: JSON body parser middleware applied.");
+app.use(express.urlencoded({ extended: true })); 
+console.log("INDEX.JS: URL-encoded body parser middleware applied.");
 
 
-// --- REMOVED: Middleware to attach db, bucket, admin, authenticate, checkRole to req ---
-// This pattern is less ideal for Vercel/serverless where modules are often hot-reloaded
-// or instantiated per request. It's cleaner for controllers/middleware to import
-// what they need directly.
-/*
+// Middleware to attach db, bucket, and admin instances to the request object
+// This is done before routes are registered.
 app.use((req, res, next) => {
   req.db = db;
   req.bucket = bucket;
@@ -30,12 +43,11 @@ app.use((req, res, next) => {
   req.checkRole = checkRole;       
   next();
 });
-*/
-// --- END REMOVED ---
+console.log("INDEX.JS: Custom context middleware (db, bucket, admin, auth helpers) applied.");
 
 
 // --- Import Route Modules ---
-// All route imports now point directly to the routes/ folder
+console.log("INDEX.JS: Importing route modules...");
 const restaurantRoutes = require("./routes/restaurantRoutes");
 const userRoutes = require("./routes/users");
 const menuRoutes = require("./routes/menus");      
@@ -44,52 +56,36 @@ const locationUtilityRoutes = require("./routes/locations");
 const reviewRoutes = require("./routes/reviews");  
 const orderRoutes = require("./routes/orders");    
 const bookingRoutes = require("./routes/bookings"); 
+console.log("INDEX.JS: Route modules imported.");
 
 
 // --- Register Routes with Middleware ---
-// Routes are mounted at specific paths and can have middleware applied.
-
-// General restaurant routes (customer-facing views, some might need auth for specific actions if modified)
-// PUT/DELETE/POST for owner are handled within restaurantRoutes.js with checkRole applied there.
+console.log("INDEX.JS: Registering routes...");
 app.use("/api/restaurant", restaurantRoutes); 
-
-// User profile and saved locations routes (requires authentication)
-// 'authenticate' is imported directly and used here.
 app.use("/api/users", authenticate, userRoutes); 
-
-// Restaurant menu management routes (requires authentication AND restaurant_owner role)
-// These are for the Dibbz_Business app.
-app.use("/api/restaurants/:restaurantId/menu", authenticate, checkRole('restaurant_owner'), menuRoutes); 
-// Restaurant table management routes (requires authentication AND restaurant_owner role)
-// These are for the Dibbz_Business app.
+app.use("/api/restaurants/:restaurantId/menu", menuRoutes); 
 app.use("/api/restaurants/:restaurantId/tables", authenticate, checkRole('restaurant_owner'), tableRoutes); 
-
-// General location utility routes (e.g., Pincode lookup - public)
 app.use("/api/locations", locationUtilityRoutes); 
-
-// Review routes (GET reviews for a restaurant: Publicly accessible. POST review: Requires authentication)
-// 'authenticate' is applied here for all review routes.
-app.use("/api/restaurants/:restaurantId/reviews", authenticate, reviewRoutes); 
-
-
-// Order and Booking routes (customer-facing, require authentication)
-// 'authenticate' is applied here for all order/booking routes.
+app.use("/api/restaurants/:restaurantId/reviews", reviewRoutes); 
 app.use("/api/orders", authenticate, orderRoutes);   
 app.use("/api/bookings", authenticate, bookingRoutes); 
+console.log("INDEX.JS: All routes registered.");
 
 
 // Root endpoint for a basic health check
 app.get("/", (req, res) => res.send("Dibbz Backend Running"));
+console.log("INDEX.JS: Root health check route '/' defined.");
 
 
-// --- Error Handling Middleware (Optional but Recommended for robust apps) ---
+// --- Error Handling Middleware ---
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the full error stack for debugging
-  res.status(500).send('Something broke on the server! Please check logs.'); // Generic error message to client
+  console.error("INDEX.JS: Uncaught error in middleware chain:", err.stack); // Log the full error stack
+  res.status(500).send('Something broke on the server! Please check logs.');
 });
+console.log("INDEX.JS: Error handling middleware defined.");
 
 
 // --- CRITICAL FOR VERCEL SERVERLESS ---
-// Instead of app.listen, export the app instance.
-// Vercel will pick up this exported app and wrap it into a serverless function.
+// Instead of app.listen, export the app instance for Vercel.
+console.log("INDEX.JS: Exporting Express app for Vercel.");
 module.exports = app;

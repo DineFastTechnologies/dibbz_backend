@@ -57,6 +57,11 @@ const reviewRoutes = require("./routes/reviews");
 const orderRoutes = require("./routes/orders");    
 const bookingRoutes = require("./routes/bookings"); 
 console.log("INDEX.JS: Route modules imported.");
+const paymentRoutes = require("./routes/paymentRoutes");
+app.use("/payment", paymentRoutes);
+const cartRoutes = require("./routes/cartRouter");
+app.use("/api/cart", cartRoutes);
+
 
 
 // --- Register Routes with Middleware ---
@@ -89,3 +94,10 @@ console.log("INDEX.JS: Error handling middleware defined.");
 // Instead of app.listen, export the app instance for Vercel.
 console.log("INDEX.JS: Exporting Express app for Vercel.");
 module.exports = app;
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`✅ Server is running at http://localhost:${PORT}`);
+  });
+}

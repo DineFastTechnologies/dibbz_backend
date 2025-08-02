@@ -1,12 +1,11 @@
+// src/controller/paymentController.js
 const Razorpay = require("razorpay");
-const admin = require("firebase-admin");
+const { admin, db } = require('../firebase'); // Vercel-ready direct imports
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET,
 });
-
-const db = admin.firestore();
 
 
 exports.createPreorderPayment = async (req, res) => {
@@ -17,7 +16,7 @@ exports.createPreorderPayment = async (req, res) => {
       return res.status(400).json({ success: false, error: "Missing fields" });
     }
 
-    const halfAmount = Math.round(totalAmount * 0.6); 
+    const halfAmount = Math.round(totalAmount * 0.6); // Amount in smallest currency unit (e.g., paise)
 
     const order = await razorpay.orders.create({
       amount: halfAmount,
@@ -53,7 +52,7 @@ exports.createRemainingPayment = async (req, res) => {
       return res.status(400).json({ success: false, error: "Missing fields" });
     }
 
-    const remainingAmount = Math.round(totalAmount * 0.4); 
+    const remainingAmount = Math.round(totalAmount * 0.4); // Amount in smallest currency unit
 
     const order = await razorpay.orders.create({
       amount: remainingAmount,

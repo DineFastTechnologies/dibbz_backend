@@ -1,18 +1,34 @@
-const admin = require("firebase-admin");
-const db = admin.firestore();
+// src/controller/cartController.js
+const { admin, db } = require('../firebase'); // Vercel-ready direct imports
 
 // Add item to cart
 exports.addItemToCart = async (req, res) => {
+  const { userId } = req.params;
+  const { item, quantity } = req.body;
+  const authenticatedUserId = req.user.uid;
+
+  if (userId !== authenticatedUserId) {
+    return res.status(403).json({ success: false, error: "Forbidden: You can only modify your own cart." });
+  }
+
+  if (!item?.id || quantity == null) {
+    return res.status(400).json({ success: false, error: "Missing itemId or quantity." });
+  }
+
+  if (quantity <= 0) {
+    return res.status(400).json({ success: false, error: "Quantity must be a positive number." });
+  }
+
   try {
-    const { userId, item } = req.body;
+    const itemRef = db.collection("users").doc(userId).collection("cart").doc(item.id);
+    await itemRef.set({
+        ...item,
+        quantity,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: item.createdAt || admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true }); // Use merge to avoid overwriting other fields
 
-    if (!userId || !item?.id) {
-      return res.status(400).json({ error: "Missing userId or item" });
-    }
-
-    await db.collection("users").doc(userId).collection("cart").doc(item.id).set(item);
-
-    res.status(200).json({ success: true, message: "Item added to cart" });
+    res.status(200).json({ success: true, message: "Item added to cart", itemId: item.id });
   } catch (err) {
     console.error("Add to cart error:", err);
     res.status(500).json({ success: false, error: "Failed to add item to cart" });
@@ -21,9 +37,14 @@ exports.addItemToCart = async (req, res) => {
 
 // Get all cart items
 exports.getCart = async (req, res) => {
-  try {
-    const { userId } = req.params;
+  const { userId } = req.params;
+  const authenticatedUserId = req.user.uid;
 
+  if (userId !== authenticatedUserId) {
+    return res.status(403).json({ success: false, error: "Forbidden: You can only view your own cart." });
+  }
+
+  try {
     const cartSnap = await db.collection("users").doc(userId).collection("cart").get();
     const cartItems = cartSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
@@ -36,9 +57,14 @@ exports.getCart = async (req, res) => {
 
 // Remove item from cart
 exports.removeItemFromCart = async (req, res) => {
-  try {
-    const { userId, itemId } = req.params;
+  const { userId, itemId } = req.params;
+  const authenticatedUserId = req.user.uid;
 
+  if (userId !== authenticatedUserId) {
+    return res.status(403).json({ success: false, error: "Forbidden: You can only modify your own cart." });
+  }
+
+  try {
     await db.collection("users").doc(userId).collection("cart").doc(itemId).delete();
 
     res.status(200).json({ success: true, message: "Item removed from cart" });
@@ -50,9 +76,14 @@ exports.removeItemFromCart = async (req, res) => {
 
 // Clear cart
 exports.clearCart = async (req, res) => {
-  try {
-    const { userId } = req.params;
+  const { userId } = req.params;
+  const authenticatedUserId = req.user.uid;
 
+  if (userId !== authenticatedUserId) {
+    return res.status(403).json({ success: false, error: "Forbidden: You can only clear your own cart." });
+  }
+
+  try {
     const cartRef = db.collection("users").doc(userId).collection("cart");
     const snapshot = await cartRef.get();
 

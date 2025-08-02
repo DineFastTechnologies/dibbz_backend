@@ -1,17 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const cartController = require("../controller/cartController");
+// src/routes/cart.js
+const express = require('express');
+const router = express.Router({ mergeParams: true });
+const cartController = require('../controller/cartController'); // Import the cart controller
 
 // Add item to cart
-router.post("/add", cartController.addItemToCart);
+router.post('/:userId/items', cartController.addItemToCart);
 
-// Get all items in cart
-router.get("/:userId", cartController.getCart);
+// Get all cart items
+router.get('/:userId/items', cartController.getCart);
 
-// Remove a single item
-router.delete("/:userId/:itemId", cartController.removeItemFromCart);
+// Remove item from cart
+router.delete('/:userId/items/:itemId', cartController.removeItemFromCart);
 
-// Clear all cart items
-router.delete("/clear/:userId", cartController.clearCart);
+// Clear cart
+router.delete('/:userId/items', cartController.clearCart);
 
 module.exports = router;

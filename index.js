@@ -58,7 +58,7 @@ const orderRoutes = require("./routes/orders");
 const bookingRoutes = require("./routes/bookings"); 
 console.log("INDEX.JS: Route modules imported.");
 const paymentRoutes = require("./routes/paymentRoutes");
-app.use("/payment", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
 const cartRoutes = require("./routes/cartRouter");
 app.use("/api/cart", cartRoutes);
 

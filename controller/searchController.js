@@ -105,3 +105,39 @@ exports.getRecentSearches = async (req, res) => {
       return res.status(500).json({ error: "Internal Server Error" });
     }
   };
+
+  /**
+ * @desc Get top N popular searches across all users
+ * @route GET /api/search/popular?limit=10
+ */
+exports.getPopularSearches = async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 10;
+  
+      const globalRef = db.collection("global").doc("popular_searches");
+      const globalDoc = await globalRef.get();
+  
+      if (!globalDoc.exists) {
+        return res.status(404).json({ message: "No popular searches found" });
+      }
+  
+      const data = globalDoc.data();
+      const queries = data.queries || {};
+  
+      // Convert to array, sort by count descending
+      const sorted = Object.entries(queries)
+        .map(([term, info]) => ({
+          term,
+          count: info.count || 0,
+          lastSearchedAt: info.lastSearchedAt || null
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, limit);
+  
+      return res.status(200).json({ popularSearches: sorted });
+    } catch (error) {
+      console.error("Error fetching popular searches:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  

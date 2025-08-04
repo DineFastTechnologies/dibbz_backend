@@ -4,5 +4,6 @@ const searchController = require("../controller/searchController");
 
 router.post("/search", searchController.storeSearch);
 router.get("/recent/:userId", searchController.getRecentSearches);
+router.get("/popular", searchController.getPopularSearches);
 
 module.exports = router;

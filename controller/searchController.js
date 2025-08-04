@@ -71,3 +71,37 @@ exports.storeSearch = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+/**
+ * @desc Get the top 10 recent searches of a specific user
+ * @route GET /api/search/recent/:userId
+ */
+
+exports.getRecentSearches = async (req, res) => {
+    try {
+      const { userId } = req.params;
+  
+      if (!userId) {
+        return res.status(400).json({ error: "Missing userId in params" });
+      }
+  
+      const userSearchesRef = db.collection("users").doc(userId).collection("searches").doc("recent");
+      const doc = await userSearchesRef.get();
+  
+      if (!doc.exists) {
+        return res.status(404).json({ message: "No recent searches found for this user" });
+      }
+  
+      const data = doc.data();
+      const recentQueries = data.queries || [];
+  
+      return res.status(200).json({
+        userId,
+        recentSearches: recentQueries,
+        lastSearched: data.lastSearched || null
+      });
+    } catch (error) {
+      console.error("Error fetching recent searches:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  };

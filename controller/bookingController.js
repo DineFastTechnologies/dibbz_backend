@@ -275,8 +275,6 @@ const cancelBooking = async (req, res) => {
     res.status(500).send('Failed to cancel booking.');
   }
 };
-
-
 module.exports = {
   createBooking,
   getUserBookings,

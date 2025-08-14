@@ -56,11 +56,12 @@ const locationUtilityRoutes = require("./routes/locations");
 const reviewRoutes = require("./routes/reviews");  
 const orderRoutes = require("./routes/orders");    
 const bookingRoutes = require("./routes/bookings"); 
-console.log("INDEX.JS: Route modules imported.");
 const paymentRoutes = require("./routes/paymentRoutes");
-app.use("/payment", paymentRoutes);
 const cartRoutes = require("./routes/cartRouter");
 const authRoutes = require('./routes/authRoutes');
+const discountRoutes = require("./routes/discountRoutes");
+
+
 
 
 
@@ -78,6 +79,7 @@ app.use("/api/bookings", authenticate, bookingRoutes);
 app.use("/api/payments", authenticate, paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
 app.use('/api/auth', authRoutes);
+app.use("/api/discounts", discountRoutes);
 console.log("INDEX.JS: All routes registered.");
 
 

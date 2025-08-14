@@ -1,7 +1,7 @@
 // routes/discountRoutes.js
 const express = require("express");
 const router = express.Router();
-const discountController = require("../controllers/discountController");
+const discountController = require("../controller/discountController");
 
 // Admin APIs
 router.post("/", discountController.createDiscount);

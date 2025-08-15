@@ -7,22 +7,55 @@ const db = admin.firestore();
  */
 exports.createDiscount = async (req, res) => {
   try {
-    const { type, timeSlot, discountPercent, couponCode, appliesTo, validFrom, validUntil, isActive } = req.body;
+    const {
+      type,               // "time_slot" | "coupon" | "general"
+      discountMode,       // "percentage" | "flat"
+      amount,             // number
+      timeSlot,           // { start: "18:00", end: "20:00" }
+      couponCode,
+      appliesTo,
+      validFrom,
+      validUntil,
+      isActive,
+      maxUses
+    } = req.body;
 
-    if (!type || !discountPercent) {
-      return res.status(400).json({ success: false, error: "type and discountPercent are required" });
+    // Restaurant context
+    const restaurantId = req.user?.restaurantId || req.body.restaurantId;
+    if (!restaurantId) {
+      return res.status(400).json({ success: false, error: "restaurantId is required" });
+    }
+
+    if (!type || !discountMode || !amount) {
+      return res.status(400).json({ success: false, error: "type, discountMode and amount are required" });
+    }
+
+    // Validate dates
+    const fromDate = validFrom ? new Date(validFrom) : null;
+    const untilDate = validUntil ? new Date(validUntil) : null;
+    if (fromDate && untilDate && fromDate >= untilDate) {
+      return res.status(400).json({ success: false, error: "validFrom must be before validUntil" });
+    }
+
+    // Validate timeSlot if provided
+    if (timeSlot && timeSlot.start >= timeSlot.end) {
+      return res.status(400).json({ success: false, error: "timeSlot start must be before end" });
     }
 
     const newDiscountRef = db.collection("discounts").doc();
     await newDiscountRef.set({
-      type, // "time_slot" | "coupon" | "general"
-      timeSlot: timeSlot || null, // { start: "18:00", end: "19:00" }
-      discountPercent,
+      restaurantId,
+      type,
+      discountMode,
+      amount,
+      timeSlot: timeSlot || null,
       couponCode: couponCode || null,
-      appliesTo: appliesTo || ["booking", "preorder", "finalBill"],
-      validFrom: validFrom ? new Date(validFrom) : null,
-      validUntil: validUntil ? new Date(validUntil) : null,
+      appliesTo: appliesTo || ["booking", "preorder", "finalBill", "dineInPayment"],
+      validFrom: fromDate,
+      validUntil: untilDate,
       isActive: isActive ?? true,
+      maxUses: maxUses || null,
+      usedCount: 0,
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
@@ -33,12 +66,19 @@ exports.createDiscount = async (req, res) => {
   }
 };
 
+
 /**
  * Get all discounts (Admin)
  */
 exports.getAllDiscounts = async (req, res) => {
   try {
-    const snapshot = await db.collection("discounts").get();
+    let query = db.collection("discounts");
+
+    if (req.user?.role === "restaurantAdmin") {
+      query = query.where("restaurantId", "==", req.user.restaurantId);
+    }
+
+    const snapshot = await query.get();
     const discounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.status(200).json({ success: true, discounts });
   } catch (error) {
@@ -46,6 +86,7 @@ exports.getAllDiscounts = async (req, res) => {
     res.status(500).json({ success: false, error: "Failed to fetch discounts" });
   }
 };
+
 
 /**
  * Get single discount by ID

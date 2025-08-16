@@ -76,7 +76,7 @@ app.use("/api/locations", locationUtilityRoutes);
 app.use("/api/restaurants/:restaurantId/reviews", reviewRoutes); 
 app.use("/api/orders", authenticate, orderRoutes);   
 app.use("/api/bookings", authenticate, bookingRoutes); 
-app.use("/api/payments", authenticate, paymentRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/discounts", discountRoutes);

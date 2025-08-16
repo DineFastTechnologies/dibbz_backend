@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_015",
+  "name": "The Ice Cream Shop",
+  "location": {
+    "address": "111, Mall of India, Noida",
+    "lat": 28.567,
+    "lng": 77.321
+  },
+  "cuisine": ["Desserts", "Ice Creams"],
+  "rating": 4.8,
+  "priceLevel": "$",
+  "openStatus": "open",
+  "tags": ["Desserts", "Ice Creams", "Family Friendly"],
+  "contactNumber": "+91-9876543221",
+  "images": [
+    "https://images.unsplash.com/photo-1580981552873-5084a7a7b865?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1570197788417-0e82375c934d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1559703248-dca749487462?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+  "dineType": "Dessert Parlor",
+  "createdAt": "2025-07-25T22:00:00Z",
+  "isPureVeg": true,
+  "foodCategories": ["Desserts", "Ice Creams", "Shakes", "Sundaes"],
+  "ratingSum": 4.8,
+  "reviewCount": 1,
+  "averageRating": 4.8
+}

@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_011",
+  "name": "The Biryani House",
+  "location": {
+    "address": "707, Hyderabad",
+    "lat": 17.385,
+    "lng": 78.486
+  },
+  "cuisine": ["North Indian", "Biryani"],
+  "rating": 4.6,
+  "priceLevel": "$$$",
+  "openStatus": "open",
+  "tags": ["Authentic", "Biryani", "Family Restaurant"],
+  "contactNumber": "+91-9876543217",
+  "images": [
+    "https://images.unsplash.com/photo-1589302168068-964664d93dc0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1512058564366-18510be2db19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1563379926-89869c494394?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+  "dineType": "Casual Dine",
+  "createdAt": "2025-07-21T18:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["North Indian", "Biryani", "Kebabs", "Desserts"],
+  "ratingSum": 4.6,
+  "reviewCount": 1,
+  "averageRating": 4.6
+}

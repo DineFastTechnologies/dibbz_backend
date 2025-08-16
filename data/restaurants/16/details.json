@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_016",
+  "name": "The Sandwich Shop",
+  "location": {
+    "address": "121, MG Road, Pune",
+    "lat": 18.520,
+    "lng": 73.856
+  },
+  "cuisine": ["American", "Sandwiches"],
+  "rating": 4.2,
+  "priceLevel": "$",
+  "openStatus": "open",
+  "tags": ["Casual Dining", "Fast Food", "Sandwiches"],
+  "contactNumber": "+91-9876543222",
+  "images": [
+    "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80",
+    "https://images.unsplash.com/photo-1553909489-cd44049e9276?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1604382354936-07c5d9983d34?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+  "dineType": "Cafe",
+  "createdAt": "2025-07-26T12:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["American", "Sandwiches", "Salads", "Beverages"],
+  "ratingSum": 4.2,
+  "reviewCount": 1,
+  "averageRating": 4.2
+}

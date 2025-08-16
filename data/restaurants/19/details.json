@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_019",
+  "name": "The Momo House",
+  "location": {
+    "address": "151, Darjeeling",
+    "lat": 27.041,
+    "lng": 88.262
+  },
+  "cuisine": ["Tibetan", "Momos"],
+  "rating": 4.7,
+  "priceLevel": "$",
+  "openStatus": "open",
+  "tags": ["Casual Dining", "Fast Food", "Momos"],
+  "contactNumber": "+91-9876543225",
+  "images": [
+    "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
+    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=999&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=765&q=80",
+  "dineType": "QSR",
+  "createdAt": "2025-07-29T15:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["Tibetan", "Momos", "Thukpa", "Beverages"],
+  "ratingSum": 4.7,
+  "reviewCount": 1,
+  "averageRating": 4.7
+}

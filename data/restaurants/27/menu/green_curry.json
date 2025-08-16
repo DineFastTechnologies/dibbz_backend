@@ -1,8 +1,8 @@
 {
-    "id": "item_160",
-    "name": "Green Curry",
-    "description": "A central Thai variety of curry.",
-    "price": 350,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/green-curry-recipe.jpg",
-    "category": "Curries"
+  "id": "item_160",
+  "name": "Green Curry",
+  "description": "A central Thai variety of curry.",
+  "price": 350,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Curries"
 }

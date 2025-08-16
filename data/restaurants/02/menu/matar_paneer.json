@@ -1,8 +1,8 @@
 {
-    "id": "item_032",
-    "name": "Matar Paneer",
-    "description": "A vegetarian North Indian dish consisting of peas and paneer in a tomato-based sauce, spiced with garam masala.",
-    "price": 290,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/matar-paneer-recipe.jpg",
-    "category": "Dinner"
+  "id": "item_032",
+  "name": "Matar Paneer",
+  "description": "A vegetarian North Indian dish consisting of peas and paneer in a tomato-based sauce, spiced with garam masala.",
+  "price": 290,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dinner"
 }

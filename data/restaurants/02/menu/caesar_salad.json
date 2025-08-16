@@ -1,8 +1,8 @@
 {
-    "id": "item_019",
-    "name": "Caesar Salad",
-    "description": "Classic salad with lettuce and dressing.",
-    "price": 140,
-    "photo": "https://media.chefdehome.com/740/0/0/caesar/classic-caesar-salad.jpg",
-    "category": "Salads"
-  }
+  "id": "item_019",
+  "name": "Caesar Salad",
+  "description": "Classic salad with lettuce and dressing.",
+  "price": 140,
+  "photo": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Salads"
+}

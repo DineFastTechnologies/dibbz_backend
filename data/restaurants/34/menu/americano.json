@@ -1,8 +1,8 @@
 {
-    "id": "item_200",
-    "name": "Americano",
-    "description": "A type of coffee drink prepared by diluting an espresso with hot water, giving it a similar strength to, but different flavor from, traditionally brewed coffee.",
-    "price": 160,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/americano-recipe.jpg",
-    "category": "Coffee"
+  "id": "item_200",
+  "name": "Americano",
+  "description": "A type of coffee drink prepared by diluting an espresso with hot water, giving it a similar strength to, but different flavor from, traditionally brewed coffee.",
+  "price": 160,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Coffee"
 }

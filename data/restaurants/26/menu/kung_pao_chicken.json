@@ -1,8 +1,8 @@
 {
-    "id": "item_158",
-    "name": "Kung Pao Chicken",
-    "description": "A spicy, stir-fried Chinese dish made with cubes of chicken, peanuts, vegetables, and chili peppers.",
-    "price": 420,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/kung-pao-chicken-recipe.jpg",
-    "category": "Chinese"
+  "id": "item_158",
+  "name": "Kung Pao Chicken",
+  "description": "A spicy, stir-fried Chinese dish made with cubes of chicken, peanuts, vegetables, and chili peppers.",
+  "price": 420,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Chinese"
 }

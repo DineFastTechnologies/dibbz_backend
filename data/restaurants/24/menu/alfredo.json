@@ -1,8 +1,8 @@
 {
-    "id": "item_150",
-    "name": "Alfredo",
-    "description": "An Italian pasta dish made with fettuccine, butter, and Parmesan cheese.",
-    "price": 480,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/alfredo-recipe.jpg",
-    "category": "Pasta"
+  "id": "item_150",
+  "name": "Alfredo",
+  "description": "An Italian pasta dish made with fettuccine, butter, and Parmesan cheese.",
+  "price": 480,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Pasta"
 }

@@ -1,8 +1,8 @@
 {
-    "id": "item_059",
-    "name": "Squid Fry",
-    "description": "A dish made of squid that has been coated with spices and then fried.",
-    "price": 350,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/squid-fry-recipe.jpg",
-    "category": "Seafood"
+  "id": "item_059",
+  "name": "Squid Fry",
+  "description": "A dish made of squid that has been coated with spices and then fried.",
+  "price": 350,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Seafood"
 }

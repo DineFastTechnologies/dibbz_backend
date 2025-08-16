@@ -1,8 +1,8 @@
 {
-    "id": "item_193",
-    "name": "Onion Dosa",
-    "description": "A popular South Indian dish.",
-    "price": 140,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/onion-dosa-recipe.jpg",
-    "category": "Dosas"
+  "id": "item_193",
+  "name": "Onion Dosa",
+  "description": "A popular South Indian dish.",
+  "price": 140,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dosas"
 }

@@ -1,8 +1,8 @@
 {
-    "id": "item_006",
-    "name": "Arrabbiata Pasta",
-    "description": "Spicy tomato sauce pasta.",
-    "price": 280,
-    "photo": "https://www.thefieryvegetarian.com/wp-content/uploads/2023/09/spaghetti-arrabiata.jpg",
-    "category": "Lunch"
+  "id": "item_006",
+  "name": "Arrabbiata Pasta",
+  "description": "Spicy tomato sauce pasta.",
+  "price": 280,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Lunch"
 }

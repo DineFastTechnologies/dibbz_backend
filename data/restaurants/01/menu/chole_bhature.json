@@ -1,8 +1,8 @@
 {
-    "id": "item_017",
-    "name": "Chole Bhature",
-    "description": "A combination of chana masala and bhatura/puri.",
-    "price": 200,
-    "photo": "https://i.ytimg.com/vi/csfIOfMnRGg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB6GPMx72TdT-BQh86wkTA3VKBRpQ",
-    "category": "Lunch"
+  "id": "item_017",
+  "name": "Chole Bhature",
+  "description": "A combination of chana masala and bhatura/puri.",
+  "price": 200,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Lunch"
 }

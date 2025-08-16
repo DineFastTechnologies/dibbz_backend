@@ -1,8 +1,8 @@
 {
-    "id": "item_031",
-    "name": "Kadai Paneer",
-    "description": "A spicy, warming, flavorful and super delicious dish made by cooking paneer & bell peppers in a fragrant, fresh ground spice powder.",
-    "price": 300,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/kadai-paneer-recipe.jpg",
-    "category": "Dinner"
+  "id": "item_031",
+  "name": "Kadai Paneer",
+  "description": "A spicy, warming, flavorful and super delicious dish made by cooking paneer & bell peppers in a fragrant, fresh ground spice powder.",
+  "price": 300,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dinner"
 }

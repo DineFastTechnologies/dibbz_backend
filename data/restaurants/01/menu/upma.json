@@ -1,8 +1,8 @@
 {
-    "id": "item_021",
-    "name": "Upma",
-    "description": "A thick porridge from dry-roasted semolina or coarse rice flour.",
-    "price": 150,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/07/upma-recipe.jpg",
-    "category": "Breakfast"
+  "id": "item_021",
+  "name": "Upma",
+  "description": "A thick porridge from dry-roasted semolina or coarse rice flour.",
+  "price": 150,
+  "photo": "https://images.unsplash.com/photo-1601050690597-df0568f70950?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Breakfast"
 }

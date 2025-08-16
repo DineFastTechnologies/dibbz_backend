@@ -1,8 +1,8 @@
 {
-    "id": "item_020",
-    "name": "Vada",
-    "description": "A category of savoury fried snacks.",
-    "price": 120,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2022/03/vada-recipe.jpg",
-    "category": "Breakfast"
+  "id": "item_020",
+  "name": "Vada",
+  "description": "A category of savoury fried snacks.",
+  "price": 120,
+  "photo": "https://images.unsplash.com/photo-1601050690597-df0568f70950?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Breakfast"
 }

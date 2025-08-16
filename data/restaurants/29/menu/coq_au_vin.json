@@ -1,8 +1,8 @@
 {
-    "id": "item_172",
-    "name": "Coq au Vin",
-    "description": "A French dish of chicken braised with wine, lardons, mushrooms, and optionally garlic.",
-    "price": 750,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/coq-au-vin-recipe.jpg",
-    "category": "French"
+  "id": "item_172",
+  "name": "Coq au Vin",
+  "description": "A French dish of chicken braised with wine, lardons, mushrooms, and optionally garlic.",
+  "price": 750,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "French"
 }

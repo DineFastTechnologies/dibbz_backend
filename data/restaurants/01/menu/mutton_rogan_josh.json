@@ -1,8 +1,8 @@
 {
-    "id": "item_013",
-    "name": "Mutton Rogan Josh",
-    "description": "Aromatic lamb dish.",
-    "price": 450,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/mutton-rogan-josh-recipe.jpg",
-    "category": "Dinner"
+  "id": "item_013",
+  "name": "Mutton Rogan Josh",
+  "description": "Aromatic lamb dish.",
+  "price": 450,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dinner"
 }

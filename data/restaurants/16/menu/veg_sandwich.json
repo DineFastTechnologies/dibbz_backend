@@ -1,8 +1,8 @@
 {
-    "id": "item_107",
-    "name": "Veg Sandwich",
-    "description": "A sandwich made with a filling of vegetables.",
-    "price": 180,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/veg-sandwich-recipe.jpg",
-    "category": "Sandwiches"
+  "id": "item_107",
+  "name": "Veg Sandwich",
+  "description": "A sandwich made with a filling of vegetables.",
+  "price": 180,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Sandwiches"
 }

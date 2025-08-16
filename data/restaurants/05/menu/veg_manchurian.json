@@ -1,8 +1,8 @@
 {
-    "id": "item_051",
-    "name": "Veg Manchurian",
-    "description": "A popular Indo-Chinese dish of fried veggie balls in a spicy, sweet and tangy sauce.",
-    "price": 250,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/veg-manchurian-recipe.jpg",
-    "category": "Chinese"
+  "id": "item_051",
+  "name": "Veg Manchurian",
+  "description": "A popular Indo-Chinese dish of fried veggie balls in a spicy, sweet and tangy sauce.",
+  "price": 250,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Chinese"
 }

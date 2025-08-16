@@ -1,8 +1,8 @@
 {
-    "id": "item_194",
-    "name": "Idli",
-    "description": "A popular South Indian dish.",
-    "price": 100,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/idli-recipe.jpg",
-    "category": "Idlis"
+  "id": "item_194",
+  "name": "Idli",
+  "description": "A popular South Indian dish.",
+  "price": 100,
+  "photo": "https://images.unsplash.com/photo-1601050690597-df0568f70950?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Idlis"
 }

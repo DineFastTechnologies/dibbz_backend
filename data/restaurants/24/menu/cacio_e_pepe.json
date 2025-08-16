@@ -1,8 +1,8 @@
 {
-    "id": "item_147",
-    "name": "Cacio e Pepe",
-    "description": "An Italian pasta dish from Rome made with black pepper, hard cheese, and pasta.",
-    "price": 420,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/cacio-e-pepe-recipe.jpg",
-    "category": "Pasta"
+  "id": "item_147",
+  "name": "Cacio e Pepe",
+  "description": "An Italian pasta dish from Rome made with black pepper, hard cheese, and pasta.",
+  "price": 420,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Pasta"
 }

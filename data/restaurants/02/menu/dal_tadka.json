@@ -1,8 +1,8 @@
 {
-    "id": "item_034",
-    "name": "Dal Tadka",
-    "description": "A popular Indian lentil dish made with arhar dal or masoor dal.",
-    "price": 220,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/dal-tadka-recipe.jpg",
-    "category": "Dinner"
+  "id": "item_034",
+  "name": "Dal Tadka",
+  "description": "A popular Indian lentil dish made with arhar dal or masoor dal.",
+  "price": 220,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dinner"
 }

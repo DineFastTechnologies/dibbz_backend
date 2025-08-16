@@ -1,8 +1,8 @@
 {
-    "id": "item_139",
-    "name": "Dal Bati Churma",
-    "description": "A popular Rajasthani dish.",
-    "price": 400,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/dal-bati-churma-recipe.jpg",
-    "category": "Thalis"
+  "id": "item_139",
+  "name": "Dal Bati Churma",
+  "description": "A popular Rajasthani dish.",
+  "price": 400,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Thalis"
 }

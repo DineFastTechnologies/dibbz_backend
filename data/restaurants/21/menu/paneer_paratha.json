@@ -1,8 +1,8 @@
 {
-    "id": "item_133",
-    "name": "Paneer Paratha",
-    "description": "A popular Indian flatbread stuffed with a spicy paneer filling.",
-    "price": 180,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/paneer-paratha-recipe.jpg",
-    "category": "Parathas"
+  "id": "item_133",
+  "name": "Paneer Paratha",
+  "description": "A popular Indian flatbread stuffed with a spicy paneer filling.",
+  "price": 180,
+  "photo": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Parathas"
 }

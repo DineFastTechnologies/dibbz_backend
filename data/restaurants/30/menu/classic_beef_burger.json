@@ -1,8 +1,8 @@
 {
-    "id": "item_175",
-    "name": "Classic Beef Burger",
-    "description": "A classic beef burger with lettuce, tomato, and cheese.",
-    "price": 350,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/classic-beef-burger-recipe.jpg",
-    "category": "Burgers"
+  "id": "item_175",
+  "name": "Classic Beef Burger",
+  "description": "A classic beef burger with lettuce, tomato, and cheese.",
+  "price": 350,
+  "photo": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Burgers"
 }

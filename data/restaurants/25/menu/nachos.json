@@ -1,8 +1,8 @@
 {
-    "id": "item_153",
-    "name": "Nachos",
-    "description": "A dish from northern Mexico that consists of heated tortilla chips or totopos covered with melted cheese, often served as a snack or appetizer.",
-    "price": 280,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/nachos-recipe.jpg",
-    "category": "Nachos"
+  "id": "item_153",
+  "name": "Nachos",
+  "description": "A dish from northern Mexico that consists of heated tortilla chips or totopos covered with melted cheese, often served as a snack or appetizer.",
+  "price": 280,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Nachos"
 }

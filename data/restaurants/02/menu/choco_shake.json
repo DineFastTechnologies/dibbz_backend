@@ -1,8 +1,8 @@
 {
-    "id": "item_015",
-    "name": "Choco Shake",
-    "description": "Chocolate milkshake with ice cream.",
-    "price": 130,
-    "photo": "https://breadsandsweets.com/wp-content/uploads/2022/07/chocolate-milkshake-pict-3-1-of-1-683x1024.jpg",
-    "category": "Beverages"
-  }
+  "id": "item_015",
+  "name": "Choco Shake",
+  "description": "Chocolate milkshake with ice cream.",
+  "price": 130,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Beverages"
+}

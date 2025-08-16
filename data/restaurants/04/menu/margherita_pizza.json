@@ -1,8 +1,8 @@
 {
-    "id": "item_007",
-    "name": "Margherita Pizza",
-    "description": "Classic pizza with tomatoes, mozzarella, and basil.",
-    "price": 320,
-    "photo": "https://img.favpng.com/24/12/24/pizza-margherita-italian-cuisine-calzone-new-york-style-pizza-png-favpng-Bgk6nrwbtxmWpTEM9tH6mnT3P.jpg",
-    "category": "Dinner"
+  "id": "item_007",
+  "name": "Margherita Pizza",
+  "description": "Classic pizza with tomatoes, mozzarella, and basil.",
+  "price": 320,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dinner"
 }

@@ -1,8 +1,8 @@
 {
-    "id": "item_004",
-    "name": "Butter Chicken",
-    "description": "Creamy and flavorful chicken curry.",
-    "price": 350,
-    "photo": "https://www.licious.in/blog/wp-content/uploads/2020/10/butter-chicken--750x750.jpg",
-    "category": "Dinner"
+  "id": "item_004",
+  "name": "Butter Chicken",
+  "description": "Creamy and flavorful chicken curry.",
+  "price": 350,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Dinner"
 }

@@ -1,8 +1,8 @@
 {
-    "id": "item_084",
-    "name": "Veg Biryani",
-    "description": "A popular Indian rice dish made with vegetables.",
-    "price": 350,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/veg-biryani-recipe.jpg",
-    "category": "Biryani"
+  "id": "item_084",
+  "name": "Veg Biryani",
+  "description": "A popular Indian rice dish made with vegetables.",
+  "price": 350,
+  "photo": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Biryani"
 }

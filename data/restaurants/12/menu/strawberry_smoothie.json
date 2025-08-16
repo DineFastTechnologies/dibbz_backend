@@ -1,8 +1,8 @@
 {
-    "id": "item_090",
-    "name": "Strawberry Smoothie",
-    "description": "A thick and creamy beverage made from puréed raw fruit, vegetables, and sometimes dairy products.",
-    "price": 220,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/strawberry-smoothie-recipe.jpg",
-    "category": "Smoothies"
+  "id": "item_090",
+  "name": "Strawberry Smoothie",
+  "description": "A thick and creamy beverage made from puréed raw fruit, vegetables, and sometimes dairy products.",
+  "price": 220,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Smoothies"
 }

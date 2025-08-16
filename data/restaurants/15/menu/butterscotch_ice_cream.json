@@ -1,8 +1,8 @@
 {
-    "id": "item_104",
-    "name": "Butterscotch Ice Cream",
-    "description": "A popular flavor of ice cream.",
-    "price": 170,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/butterscotch-ice-cream-recipe.jpg",
-    "category": "Ice Creams"
+  "id": "item_104",
+  "name": "Butterscotch Ice Cream",
+  "description": "A popular flavor of ice cream.",
+  "price": 170,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Ice Creams"
 }

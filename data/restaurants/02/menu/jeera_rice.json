@@ -1,8 +1,8 @@
 {
-    "id": "item_035",
-    "name": "Jeera Rice",
-    "description": "A simple and popular rice dish flavored with cumin.",
-    "price": 180,
-    "photo": "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/jeera-rice-recipe.jpg",
-    "category": "Rice"
+  "id": "item_035",
+  "name": "Jeera Rice",
+  "description": "A simple and popular rice dish flavored with cumin.",
+  "price": 180,
+  "photo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+  "category": "Rice"
 }

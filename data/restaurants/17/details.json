@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_017",
+  "name": "The Roll Shop",
+  "location": {
+    "address": "131, Park Street, Kolkata",
+    "lat": 22.551,
+    "lng": 88.352
+  },
+  "cuisine": ["North Indian", "Rolls"],
+  "rating": 4.3,
+  "priceLevel": "$",
+  "openStatus": "open",
+  "tags": ["Casual Dining", "Fast Food", "Rolls"],
+  "contactNumber": "+91-9876543223",
+  "images": [
+    "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
+    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=999&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=765&q=80",
+  "dineType": "QSR",
+  "createdAt": "2025-07-27T13:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["North Indian", "Rolls", "Kebabs", "Beverages"],
+  "ratingSum": 4.3,
+  "reviewCount": 1,
+  "averageRating": 4.3
+}

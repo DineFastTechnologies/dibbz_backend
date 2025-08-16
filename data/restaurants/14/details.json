@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_014",
+  "name": "The Waffle House",
+  "location": {
+    "address": "101, Cyber Hub, Gurgaon",
+    "lat": 28.494,
+    "lng": 77.088
+  },
+  "cuisine": ["Desserts", "Waffles"],
+  "rating": 4.7,
+  "priceLevel": "$$",
+  "openStatus": "open",
+  "tags": ["Desserts", "Waffles", "Cafe"],
+  "contactNumber": "+91-9876543220",
+  "images": [
+    "https://images.unsplash.com/photo-1562447279-6940191a438a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1558961363-fa8fdfc16412?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=780&q=80",
+  "dineType": "Cafe",
+  "createdAt": "2025-07-24T21:00:00Z",
+  "isPureVeg": true,
+  "foodCategories": ["Desserts", "Waffles", "Pancakes", "Shakes"],
+  "ratingSum": 4.7,
+  "reviewCount": 1,
+  "averageRating": 4.7
+}

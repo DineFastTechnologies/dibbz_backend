@@ -1,75 +1,72 @@
 // src/controller/restaurantCRUD.js
-const { v4: uuidv4 } = require("uuid"); 
-// MODIFIED: Import admin, db, and bucket directly from the firebase.js file
-const { admin, db, bucket } = require("../firebase"); 
+const { v4: uuidv4 } = require("uuid");
+const { admin, db, bucket } = require("../firebase");
 
-const restaurantSample = require("../data/restaurants/01/details.json"); 
 const restaurantCollection = db.collection("restaurants");
 
-
-// Helper function to check if the authenticated user owns the target restaurant
-// MODIFIED: Uses directly imported 'db' and 'admin'
-const checkRestaurantOwnership = async (req, res, restaurantId) => {
-  const authenticatedUserId = req.user.uid;
-
-  try {
-    const userDoc = await db.collection('users').doc(authenticatedUserId).get(); // Use directly imported 'db'
-    if (!userDoc.exists) {
-      res.status(403).send('Forbidden: User profile not found.');
-      return false;
-    }
-    const userRole = userDoc.data()?.role;
-    const userOwnedRestaurantId = userDoc.data()?.ownedRestaurantId;
-
-    if (userRole === 'admin') { 
-        return true;
-    }
-    if (userRole === 'restaurant_owner' && userOwnedRestaurantId === restaurantId) {
-        return true;
-    }
-
-    res.status(403).send('Forbidden: You do not own this restaurant or lack permissions.');
-    return false;
-  } catch (error) {
-    console.error('Error checking restaurant ownership:', error);
-    res.status(500).send('Server error during ownership check.');
-    return false;
-  }
-};
-
-
-// CREATE (Seeding function)
-// MODIFIED: Uses directly imported 'db'
+// ✅ CREATE restaurant from request body
 const createRestaurant = async (req, res) => {
   try {
-    const data = require("../data/restaurants/01/details.json");
-    const restaurants = data.restaurants;
-    const batch = db.batch(); // Use directly imported 'db'
+    const data = req.body;
 
-    restaurants.forEach((restaurant) => {
-      const id = uuidv4();
-      const docRef = restaurantCollection.doc(id);
-      batch.set(docRef, { ...restaurant, id });
+    // Required fields validation
+    const requiredFields = [
+      "name",
+      "location.lat",
+      "location.lng",
+      "location.address",
+      "cuisine",
+      "rating",
+      "priceLevel",
+      "openStatus",
+      "tags",
+      "contactNumber",
+      "bannerImage",
+      "dineType",
+      "isPureVeg",
+      "foodCategories",
+      "images"
+    ];
+
+    for (const field of requiredFields) {
+      const keys = field.split(".");
+      let value = data;
+      for (const key of keys) {
+        value = value?.[key];
+      }
+      if (value === undefined || value === null) {
+        return res.status(400).send(`Missing required field: ${field}`);
+      }
+    }
+
+    const id = uuidv4();
+    const restaurantData = {
+      ...data,
+      id,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    await restaurantCollection.doc(id).set(restaurantData);
+
+    res.status(201).json({
+      message: "Restaurant created successfully.",
+      restaurant: restaurantData,
     });
-
-    await batch.commit();
-    res.status(201).send({ message: "Seeded restaurant data successfully." });
   } catch (error) {
-    console.error("Seeding error:", error);
-    res.status(500).send("Failed to seed restaurant data.");
+    console.error("Create Restaurant Error:", error);
+    res.status(500).send("Failed to create restaurant.");
   }
 };
 
-
-// READ (All Restaurants)
-// MODIFIED: Uses directly imported 'db'
+// ✅ READ all restaurants
 const getAllRestaurants = async (req, res) => {
   try {
-    let query = restaurantCollection; // restaurantCollection uses 'db' from its declaration
+    let query = restaurantCollection;
 
     const { isPureVeg, foodCategory, lat, lng, radiusKm } = req.query;
 
-    if (isPureVeg === 'true') {
+    if (isPureVeg === "true") {
       query = query.where("isPureVeg", "==", true);
     }
 
@@ -79,30 +76,30 @@ const getAllRestaurants = async (req, res) => {
 
     let restaurants = [];
     if (lat && lng && radiusKm) {
-        const latitude = parseFloat(lat);
-        const longitude = parseFloat(lng);
-        const radius = parseFloat(radiusKm);
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      const radius = parseFloat(radiusKm);
 
-        if (isNaN(latitude) || isNaN(longitude) || isNaN(radius)) {
-            return res.status(400).send('Invalid latitude, longitude, or radius for nearby filter.');
+      if (isNaN(latitude) || isNaN(longitude) || isNaN(radius)) {
+        return res.status(400).send("Invalid latitude, longitude, or radius for nearby filter.");
+      }
+
+      const { minLat, maxLat, minLng, maxLng } = getBoundingBox(latitude, longitude, radius);
+      const snapshot = await query
+        .where("location.lat", ">=", minLat)
+        .where("location.lat", "<=", maxLat)
+        .get();
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.location.lng >= minLng && data.location.lng <= maxLng) {
+          restaurants.push({ id: doc.id, ...data });
         }
-        const { minLat, maxLat, minLng, maxLng } = getBoundingBox(latitude, longitude, radius);
-
-        const snapshot = await query.where("location.lat", ">=", minLat).where("location.lat", "<=", maxLat).get();
-
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.location.lng >= minLng && data.location.lng <= maxLng) {
-                restaurants.push({ id: doc.id, ...data });
-            }
-        });
-        res.status(200).json(restaurants);
-        return;
+      });
+      return res.status(200).json(restaurants);
     }
 
     const snapshot = await query.get();
-    restaurants = [];
-
     snapshot.forEach((doc) => {
       restaurants.push({ id: doc.id, ...doc.data() });
     });
@@ -114,11 +111,11 @@ const getAllRestaurants = async (req, res) => {
   }
 };
 
-
+// ✅ READ one by ID
 const getRestaurantById = async (req, res) => {
   try {
     const id = req.params.id;
-    const doc = await restaurantCollection.doc(id).get(); // restaurantCollection uses 'db'
+    const doc = await restaurantCollection.doc(id).get();
 
     if (!doc.exists) {
       return res.status(404).send("Restaurant not found");
@@ -131,37 +128,45 @@ const getRestaurantById = async (req, res) => {
   }
 };
 
-
-// UPDATE Restaurant (Protected)
-// MODIFIED: Uses directly imported 'admin' and 'db'
+// ✅ UPDATE
 const updateRestaurant = async (req, res) => {
   const id = req.params.id;
-  if (!await checkRestaurantOwnership(req, res, id)) return;
-
   const data = req.body;
 
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
     return res.status(400).send("Invalid update data");
   }
 
   const allowedFields = [
-    'name', 'location', 'cuisine', 'rating', 'priceLevel', 'openStatus',
-    'tags', 'contactNumber', 'bannerImage', 'dineType', 'isPureVeg', 'foodCategories', 'images'
+    "name",
+    "location",
+    "cuisine",
+    "rating",
+    "priceLevel",
+    "openStatus",
+    "tags",
+    "contactNumber",
+    "bannerImage",
+    "dineType",
+    "isPureVeg",
+    "foodCategories",
+    "images",
   ];
+
   const filteredData = {};
   for (const key of allowedFields) {
     if (data[key] !== undefined) {
       filteredData[key] = data[key];
     }
   }
-  filteredData.updatedAt = admin.firestore.FieldValue.serverTimestamp(); // Use directly imported 'admin'
+  filteredData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
 
   if (Object.keys(filteredData).length <= 1 && filteredData.updatedAt) {
-    return res.status(400).send('No relevant restaurant data provided for update.');
+    return res.status(400).send("No relevant restaurant data provided for update.");
   }
 
   try {
-    await restaurantCollection.doc(id).update(filteredData); // restaurantCollection uses 'db'
+    await restaurantCollection.doc(id).update(filteredData);
     res.status(200).send("Restaurant updated successfully.");
   } catch (error) {
     console.error("Update Restaurant Error:", error);
@@ -169,34 +174,32 @@ const updateRestaurant = async (req, res) => {
   }
 };
 
-
-// DELETE Restaurant (Protected)
-// MODIFIED: Uses directly imported 'db' and 'bucket'
+// ✅ DELETE
 const deleteRestaurant = async (req, res) => {
   const id = req.params.id;
-  if (!await checkRestaurantOwnership(req, res, id)) return;
 
   try {
-    // Delete all menu items and tables subcollections first
-    const menuItemsSnapshot = await db.collection('restaurants').doc(id).collection('menuItems').get(); // Use directly imported 'db'
+    // Delete menuItems subcollection
+    const menuItemsSnapshot = await db.collection("restaurants").doc(id).collection("menuItems").get();
     const menuBatch = db.batch();
-    menuItemsSnapshot.docs.forEach(doc => menuBatch.delete(doc.ref));
+    menuItemsSnapshot.docs.forEach((doc) => menuBatch.delete(doc.ref));
     await menuBatch.commit();
 
-    const tablesSnapshot = await db.collection('restaurants').doc(id).collection('tables').get(); // Use directly imported 'db'
+    // Delete tables subcollection
+    const tablesSnapshot = await db.collection("restaurants").doc(id).collection("tables").get();
     const tableBatch = db.batch();
-    tablesSnapshot.docs.forEach(doc => tableBatch.delete(doc.ref));
+    tablesSnapshot.docs.forEach((doc) => tableBatch.delete(doc.ref));
     await tableBatch.commit();
 
-    // Delete associated images from Cloud Storage
+    // Delete images from Cloud Storage
     const imagePrefix = `restaurants/${id}/images/`;
-    const [files] = await bucket.getFiles({ prefix: imagePrefix }); // Use directly imported 'bucket'
+    const [files] = await bucket.getFiles({ prefix: imagePrefix });
     if (files.length > 0) {
-      await Promise.all(files.map(file => file.delete()));
+      await Promise.all(files.map((file) => file.delete()));
       console.log(`Deleted ${files.length} images for restaurant ${id} from Cloud Storage.`);
     }
 
-    await restaurantCollection.doc(id).delete(); // restaurantCollection uses 'db'
+    await restaurantCollection.doc(id).delete();
     res.status(200).send("Restaurant deleted successfully.");
   } catch (error) {
     console.error("Delete Restaurant Error:", error);
@@ -204,29 +207,27 @@ const deleteRestaurant = async (req, res) => {
   }
 };
 
-
-// Helper for rough geographical bounding box calculation
+// ✅ Nearby search helper
 function getBoundingBox(latitude, longitude, radiusKm) {
   const earthRadiusKm = 6371;
+  const latDelta = (radiusKm / earthRadiusKm) * (180 / Math.PI);
+  const lngDelta =
+    (radiusKm / (earthRadiusKm * Math.cos((latitude * Math.PI) / 180))) * (180 / Math.PI);
 
-  const latDelta = radiusKm / earthRadiusKm * (180 / Math.PI);
-  const lngDelta = radiusKm / (earthRadiusKm * Math.cos(latitude * Math.PI / 180)) * (180 / Math.PI);
-
-  const minLat = latitude - latDelta;
-  const maxLat = latitude + latDelta;
-  const minLng = longitude - lngDelta;
-  const maxLng = longitude + lngDelta;
-
-  return { minLat, maxLat, minLng, maxLng };
+  return {
+    minLat: latitude - latDelta,
+    maxLat: latitude + latDelta,
+    minLng: longitude - lngDelta,
+    maxLng: longitude + lngDelta,
+  };
 }
 
-// READ (Nearby Restaurants)
-// MODIFIED: Uses directly imported 'db'
+// ✅ GET nearby restaurants
 const getNearbyRestaurants = async (req, res) => {
   const { lat, lng, radiusKm = 10 } = req.query;
 
   if (lat == null || lng == null) {
-    return res.status(400).send('Latitude and Longitude are required for nearby search.');
+    return res.status(400).send("Latitude and Longitude are required for nearby search.");
   }
 
   const latitude = parseFloat(lat);
@@ -234,23 +235,22 @@ const getNearbyRestaurants = async (req, res) => {
   const radius = parseFloat(radiusKm);
 
   if (isNaN(latitude) || isNaN(longitude) || isNaN(radius)) {
-    return res.status(400).send('Invalid latitude, longitude, or radius.');
+    return res.status(400).send("Invalid latitude, longitude, or radius.");
   }
 
   try {
     const { minLat, maxLat, minLng, maxLng } = getBoundingBox(latitude, longitude, radius);
-
-    const snapshot = await restaurantCollection // restaurantCollection uses 'db'
+    const snapshot = await restaurantCollection
       .where("location.lat", ">=", minLat)
       .where("location.lat", "<=", maxLat)
       .get();
 
     const restaurants = [];
     snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.location.lng >= minLng && data.location.lng <= maxLng) {
-            restaurants.push({ id: doc.id, ...data });
-        }
+      const data = doc.data();
+      if (data.location.lng >= minLng && data.location.lng <= maxLng) {
+        restaurants.push({ id: doc.id, ...data });
+      }
     });
 
     res.status(200).json(restaurants);
@@ -260,50 +260,43 @@ const getNearbyRestaurants = async (req, res) => {
   }
 };
 
-
-// Upload Restaurant Image (Protected)
-// MODIFIED: Uses directly imported 'admin', 'db', and 'bucket'
+// ✅ Upload restaurant image (no auth)
 const uploadRestaurantImage = async (req, res) => {
   const restaurantId = req.params.id;
-  if (!await checkRestaurantOwnership(req, res, restaurantId)) return;
 
   if (!req.file) {
-    return res.status(400).send('No image file provided.');
+    return res.status(400).send("No image file provided.");
   }
 
   const fileBuffer = req.file.buffer;
   const originalName = req.file.originalname;
   const contentType = req.file.mimetype;
-  const fileName = `restaurant_${restaurantId}_${Date.now()}_${originalName.replace(/\s/g, '_')}`;
+  const fileName = `restaurant_${restaurantId}_${Date.now()}_${originalName.replace(/\s/g, "_")}`;
   const destinationPath = `restaurants/${restaurantId}/images/${fileName}`;
-
-  const file = bucket.file(destinationPath); // Use directly imported 'bucket'
+  const file = bucket.file(destinationPath);
 
   try {
     await file.save(fileBuffer, {
       metadata: { contentType: contentType },
-      public: true
+      public: true,
     });
 
     const imageUrl = `https://storage.googleapis.com/${bucket.name}/${destinationPath}`;
-
-    await restaurantCollection.doc(restaurantId).update({ // restaurantCollection uses 'db'
-      images: admin.firestore.FieldValue.arrayUnion(imageUrl), // Use directly imported 'admin'
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly imported 'admin'
+    await restaurantCollection.doc(restaurantId).update({
+      images: admin.firestore.FieldValue.arrayUnion(imageUrl),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     res.status(200).json({
-      message: 'Restaurant image uploaded successfully!',
+      message: "Restaurant image uploaded successfully!",
       url: imageUrl,
     });
   } catch (error) {
     console.error(`Error uploading image for restaurant ${restaurantId}:`, error);
-    res.status(500).send('Failed to upload restaurant image.');
+    res.status(500).send("Failed to upload restaurant image.");
   }
 };
 
-
-// EXPORTING ALL CONTROLLERS
 module.exports = {
   createRestaurant,
   getAllRestaurants,

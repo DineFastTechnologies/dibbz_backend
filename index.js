@@ -83,6 +83,13 @@ const categoryRoutes = require("./routes/categories");
 
 // --- Register Routes with Middleware ---
 console.log("INDEX.JS: Registering routes...");
+
+// Add a logging middleware to trace requests
+app.use((req, res, next) => {
+  console.log(`[Request Logger] Path: ${req.path}, Method: ${req.method}`);
+  next();
+});
+
 app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/users", authenticate, userRoutes);
 app.use("/api/restaurants/:restaurantId/menu", menuRoutes);

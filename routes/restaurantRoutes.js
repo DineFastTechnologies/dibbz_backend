@@ -28,8 +28,8 @@ router.get("/", getAllRestaurants);
 // GET /restaurant/:id - Get a single restaurant by ID (publicly accessible)
 router.get("/:id", getRestaurantById);
 
-// GET /restaurant/nearby - Get nearby restaurants (publicly accessible)
-router.get("/nearby", getNearbyRestaurants);
+// GET /restaurants/nearby - Get nearby restaurants (publicly accessible)
+router.get("/restaurants/nearby", getNearbyRestaurants);
 
 // --- MODIFIED: PUT /restaurant/:id - Update restaurant (requires owner/admin role) ---
 // Now apply middleware functions directly

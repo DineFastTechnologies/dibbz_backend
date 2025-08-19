@@ -180,8 +180,26 @@ const deleteMenuItem = async (req, res) => {
   }
 };
 
+const getMenuItemById = async (req, res) => {
+  const { restaurantId, menuItemId } = req.params;
+
+  try {
+    const menuItemDoc = await db.collection('restaurants').doc(restaurantId).collection('menuItems').doc(menuItemId).get();
+
+    if (!menuItemDoc.exists) {
+      return res.status(404).send('Menu item not found.');
+    }
+
+    res.status(200).json({ id: menuItemDoc.id, ...menuItemDoc.data() });
+  } catch (error) {
+    console.error(`Error fetching menu item ${menuItemId} for restaurant ${restaurantId}:`, error);
+    res.status(500).send('Failed to fetch menu item.');
+  }
+};
+
 module.exports = {
   getMenuItems,
+  getMenuItemById,
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,

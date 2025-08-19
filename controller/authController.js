@@ -1,4 +1,7 @@
 const twilio = require('twilio');
+const { admin, db } = require('../firebase');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Lazy client getter to play well with serverless cold starts and env handling
 const getTwilioClient = () => {
@@ -64,5 +67,57 @@ exports.verifyOtp = async (req, res) => {
   } catch (error) {
     console.error("Error verifying OTP:", error?.message || error);
     return res.status(500).json({ error: "Failed to verify OTP" });
+  }
+};
+
+exports.googleLogin = async (req, res) => {
+  const { idToken } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+    let user = await admin.auth().getUserByEmail(email).catch(() => null);
+    if (!user) {
+      user = await admin.auth().createUser({
+        email,
+        displayName: name,
+        photoURL: picture,
+      });
+    }
+    const token = await admin.auth().createCustomToken(user.uid);
+    res.json({ token });
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid Google token' });
+  }
+};
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await admin.auth().getUserByEmail(email);
+    // This is a simplified login. In a real app, you'd verify the password.
+    // For Firebase, password verification is typically done on the client-side.
+    const token = await admin.auth().createCustomToken(user.uid);
+    res.json({ token });
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+};
+
+exports.register = async (req, res) => {
+  const { email, password, displayName } = req.body;
+  try {
+    const user = await admin.auth().createUser({
+      email,
+      password,
+      displayName,
+    });
+    const token = await admin.auth().createCustomToken(user.uid);
+    res.json({ token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };

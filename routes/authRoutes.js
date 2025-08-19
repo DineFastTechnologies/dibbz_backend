@@ -13,4 +13,8 @@ router.post('/verify-otp', (req, res, next) => {
   return authController.verifyOtp(req, res, next);
 });
 
+router.post('/google', authController.googleLogin);
+router.post('/login', authController.login);
+router.post('/register', authController.register);
+
 module.exports = router;

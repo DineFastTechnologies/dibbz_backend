@@ -18,10 +18,28 @@ console.log("INDEX.JS: Dotenv loaded.");
 // --- Middleware Imports ---
 console.log("INDEX.JS: Attempting to import auth middleware.");
 const { authenticate, checkRole } = require("./middleware/auth"); 
+const httpsRedirect = require("./middleware/https");
+const sanitizer = require("./middleware/sanitizer");
+const limit = require("./middleware/limit");
+const hpp = require("./middleware/hpp");
+const helmet = require("./middleware/helmet");
+const csrf = require("./middleware/csrf");
+const mongoSanitize = require("./middleware/mongoSanitize");
+const fileUpload = require('express-fileupload');
+const xss = require('./middleware/xss');
 console.log("INDEX.JS: Auth middleware imported. Authenticate defined:", typeof authenticate, "CheckRole defined:", typeof checkRole);
 
 
 const app = express();
+app.use(xss());
+app.use(fileUpload());
+app.use(mongoSanitize);
+app.use(csrf);
+app.use(helmet);
+app.use(hpp);
+app.use(limit);
+app.use(sanitizer);
+app.use(httpsRedirect);
 console.log("INDEX.JS: Express app created.");
 
 // --- Core Express Middleware ---
@@ -60,26 +78,25 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const cartRoutes = require("./routes/cartRouter");
 const authRoutes = require('./routes/authRoutes');
 const discountRoutes = require("./routes/discountRoutes");
-
-
-
-
-
+const interactionRoutes = require("./routes/interactions");
+const categoryRoutes = require("./routes/categories");
 
 // --- Register Routes with Middleware ---
 console.log("INDEX.JS: Registering routes...");
-app.use("/api/restaurant", restaurantRoutes); 
-app.use("/api/users", authenticate, userRoutes); 
-app.use("/api/restaurants/:restaurantId/menu", menuRoutes); 
-app.use("/api/restaurants/:restaurantId/tables", authenticate, checkRole('restaurant_owner'), tableRoutes); 
-app.use("/api/locations", locationUtilityRoutes); 
-app.use("/api/restaurants/:restaurantId/reviews", reviewRoutes); 
-app.use("/api/orders", authenticate, orderRoutes);   
-app.use("/api/bookings", authenticate, bookingRoutes); 
+app.use("/api/restaurant", restaurantRoutes);
+app.use("/api/users", authenticate, userRoutes);
+app.use("/api/restaurants/:restaurantId/menu", menuRoutes);
+app.use("/api/restaurants/:restaurantId/tables", authenticate, checkRole('restaurant_owner', 'admin'), tableRoutes);
+app.use("/api/locations", authenticate, locationUtilityRoutes);
+app.use("/api/restaurants/:restaurantId/reviews", authenticate, reviewRoutes);
+app.use("/api/orders", authenticate, orderRoutes);
+app.use("/api/bookings", authenticate, bookingRoutes);
 app.use("/api/payments", authenticate, paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
 app.use('/api/auth', authRoutes);
-app.use("/api/discounts", discountRoutes);
+app.use("/api/discounts", authenticate, checkRole('admin'), discountRoutes);
+app.use("/api/interactions", authenticate, interactionRoutes);
+app.use("/api/categories", categoryRoutes);
 console.log("INDEX.JS: All routes registered.");
 
 
@@ -88,11 +105,9 @@ app.get("/", (req, res) => res.send("Dibbz Backend Running"));
 console.log("INDEX.JS: Root health check route '/' defined.");
 
 
+const globalErrorHandler = require('./middleware/errorHandler');
 // --- Error Handling Middleware ---
-app.use((err, req, res, next) => {
-  console.error("INDEX.JS: Uncaught error in middleware chain:", err.stack); // Log the full error stack
-  res.status(500).send('Something broke on the server! Please check logs.');
-});
+app.use(globalErrorHandler);
 console.log("INDEX.JS: Error handling middleware defined.");
 
 

@@ -21,6 +21,12 @@ const authenticate = async (req, res, next) => {
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const userDoc = await db.collection('users').doc(decodedToken.uid).get();
+    if (userDoc.exists) {
+      decodedToken.role = userDoc.data().role;
+    } else {
+      decodedToken.role = 'user';
+    }
     req.user = decodedToken;
     return next();
   } catch (error) {
@@ -34,28 +40,7 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-const checkRole = (requiredRole) => {
-  return async (req, res, next) => {
-    if (!req.user || !req.user.uid) {
-      return res.status(401).send('Unauthorized: User not authenticated (role check).');
-    }
-
-    try {
-      const userDoc = await db.collection('users').doc(req.user.uid).get();
-      if (!userDoc.exists) {
-        return res.status(403).send('Forbidden: User profile not found in database for role check.');
-      }
-
-      const userRole = userDoc.data().role;
-      if (userRole === requiredRole || (userRole === 'admin' && requiredRole !== 'customer')) {
-        return next();
-      }
-      return res.status(403).send(`Forbidden: Requires '${requiredRole}' role.`);
-    } catch (error) {
-      return res.status(500).send('Server error during role verification.');
-    }
-  };
-};
+const { checkRole } = require('./roles');
 
 module.exports = {
   authenticate,

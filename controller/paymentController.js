@@ -1,6 +1,7 @@
 // src/controller/paymentController.js
 const Razorpay = require("razorpay");
 const { admin, db } = require('../firebase'); // Vercel-ready direct imports
+const { createNotification } = require('../services/notificationService');
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -37,6 +38,13 @@ exports.createPreorderPayment = async (req, res) => {
       });
 
     res.status(200).json({ success: true, order });
+
+    // Send a notification to the user
+    await createNotification(
+      userId,
+      'Preorder Payment Initiated',
+      `A preorder payment of ${halfAmount / 100} has been initiated.`
+    );
   } catch (error) {
     console.error("Preorder error:", error);
     res.status(500).json({ success: false, error: "Preorder payment failed" });
@@ -73,6 +81,13 @@ exports.createRemainingPayment = async (req, res) => {
       });
 
     res.status(200).json({ success: true, order });
+
+    // Send a notification to the user
+    await createNotification(
+      userId,
+      'Remaining Payment Initiated',
+      `A remaining payment of ${remainingAmount / 100} has been initiated.`
+    );
   } catch (error) {
     console.error("Remaining payment error:", error);
     res.status(500).json({ success: false, error: "Remaining payment failed" });

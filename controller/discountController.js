@@ -1,6 +1,7 @@
 // controllers/discountController.js
 const admin = require("firebase-admin");
 const db = admin.firestore();
+const { createNotification } = require('../services/notificationService');
 
 /**
  * Create a new discount (Admin)
@@ -60,6 +61,16 @@ exports.createDiscount = async (req, res) => {
     });
 
     res.status(201).json({ success: true, message: "Discount created", id: newDiscountRef.id });
+
+    // Send a notification to all users
+    const usersSnapshot = await db.collection('users').get();
+    usersSnapshot.forEach(userDoc => {
+      createNotification(
+        userDoc.id,
+        'New Discount Available!',
+        `A new ${discountMode} discount of ${amount} is available.`
+      );
+    });
   } catch (error) {
     console.error("Error creating discount:", error);
     res.status(500).json({ success: false, error: "Failed to create discount" });

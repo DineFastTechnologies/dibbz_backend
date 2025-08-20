@@ -1,7 +1,8 @@
 // src/controller/tableController.js
 
 // MODIFIED: Import admin and db directly from the firebase.js file
-const { admin, db } = require('../firebase'); 
+const { admin, db } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 // Helper function to check if the authenticated user owns the target restaurant.
 // MODIFIED: Uses directly imported 'db'
@@ -76,8 +77,15 @@ isBookable,
 createdAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly imported 'admin'
 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
 });
-res.status(201).json({ id: newTableRef.id, message: 'Table created successfully!' });
-} catch (error) {
+    res.status(201).json({ id: newTableRef.id, message: 'Table created successfully!' });
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Table Created',
+      `A new table, ${name}, has been added to your restaurant.`
+    );
+  } catch (error) {
 console.error(`Error creating table for restaurant ${restaurantId}:`, error);
 res.status(500).send('Failed to create table.');
 }
@@ -116,9 +124,16 @@ if (!doc.exists) {
 return res.status(404).send('Table not found.');
 }
 
-await tableRef.update(updateData);
-res.status(200).send('Table updated successfully!');
-} catch (error) {
+    await tableRef.update(updateData);
+    res.status(200).send('Table updated successfully!');
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Table Updated',
+      `The table, ${name}, has been updated.`
+    );
+  } catch (error) {
 console.error(`Error updating table ${tableId} for restaurant ${restaurantId}:`, error);
 res.status(500).send('Failed to update table.');
 }
@@ -139,9 +154,16 @@ if (!doc.exists) {
 return res.status(404).send('Table not found.');
 }
 
-await tableRef.delete();
-res.status(200).send('Table deleted successfully!');
-} catch (error) {
+    await tableRef.delete();
+    res.status(200).send('Table deleted successfully!');
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Table Deleted',
+      `The table, ${doc.data().name}, has been deleted.`
+    );
+  } catch (error) {
 console.error(`Error deleting table ${tableId} for restaurant ${restaurantId}:`, error);
 res.status(500).send('Failed to delete table.');
 }

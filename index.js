@@ -80,6 +80,7 @@ const authRoutes = require('./routes/authRoutes');
 const discountRoutes = require("./routes/discountRoutes");
 const interactionRoutes = require("./routes/interactions");
 const categoryRoutes = require("./routes/categories");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 // --- Register Routes with Middleware ---
 console.log("INDEX.JS: Registering routes...");
@@ -104,6 +105,7 @@ app.use('/api/auth', authRoutes);
 app.use("/api/discounts", authenticate, checkRole('admin'), discountRoutes);
 app.use("/api/interactions", authenticate, interactionRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/notifications", authenticate, notificationRoutes);
 console.log("INDEX.JS: All routes registered.");
 
 

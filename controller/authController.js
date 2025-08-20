@@ -1,6 +1,7 @@
 const twilio = require('twilio');
 const { admin, db } = require('../firebase');
 const { OAuth2Client } = require('google-auth-library');
+const { createNotification } = require('../services/notificationService');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Lazy client getter to play well with serverless cold starts and env handling
@@ -60,7 +61,19 @@ exports.verifyOtp = async (req, res) => {
 
     res.set('Cache-Control', 'no-store');
     if (verificationCheck.status === 'approved') {
-      return res.json({ message: "Phone verified successfully", verified: true });
+      let user;
+      try {
+        user = await admin.auth().getUserByPhoneNumber(phoneNumber);
+      } catch (error) {
+        if (error.code === 'auth/user-not-found') {
+          user = await admin.auth().createUser({ phoneNumber: phoneNumber });
+        } else {
+          throw error;
+        }
+      }
+      
+      const token = await admin.auth().createCustomToken(user.uid);
+      return res.json({ message: "Phone verified successfully", verified: true, token: token });
     } else {
       return res.status(400).json({ error: "Invalid or expired OTP", verified: false });
     }
@@ -89,6 +102,13 @@ exports.googleLogin = async (req, res) => {
     }
     const token = await admin.auth().createCustomToken(user.uid);
     res.json({ token });
+
+    // Send a welcome notification
+    await createNotification(
+      user.uid,
+      'Welcome to Dibbz!',
+      'We are excited to have you on board.'
+    );
   } catch (error) {
     res.status(401).json({ error: 'Invalid Google token' });
   }

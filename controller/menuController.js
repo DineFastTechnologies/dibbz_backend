@@ -1,7 +1,8 @@
 // src/controller/menuController.js
 
 // MODIFIED: Import admin and db directly from the firebase.js file
-const { admin, db } = require('../firebase'); 
+const { admin, db } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 // Helper function to check if the authenticated user owns the target restaurant.
 // MODIFIED: Uses directly imported 'db' and 'admin'
@@ -108,6 +109,13 @@ const createMenuItem = async (req, res) => {
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     res.status(201).json({ id: newMenuItemRef.id, message: 'Menu item created successfully!' });
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Menu Item Created',
+      `A new menu item, ${name}, has been added to your restaurant.`
+    );
   } catch (error) {
     console.error(`Error creating menu item for restaurant ${restaurantId}:`, error);
     res.status(500).send('Failed to create menu item.');
@@ -151,6 +159,13 @@ const updateMenuItem = async (req, res) => {
 
     await menuItemRef.update(updateData);
     res.status(200).send('Menu item updated successfully!');
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Menu Item Updated',
+      `The menu item, ${name}, has been updated.`
+    );
   } catch (error) {
     console.error(`Error updating menu item ${menuItemId} for restaurant ${restaurantId}:`, error);
     res.status(500).send('Failed to update menu item.');
@@ -174,6 +189,13 @@ const deleteMenuItem = async (req, res) => {
 
     await menuItemRef.delete();
     res.status(200).send('Menu item deleted successfully!');
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Menu Item Deleted',
+      `The menu item, ${doc.data().name}, has been deleted.`
+    );
   } catch (error) {
     console.error(`Error deleting menu item ${menuItemId} for restaurant ${restaurantId}:`, error);
     res.status(500).send('Failed to delete menu item.');

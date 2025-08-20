@@ -1,5 +1,6 @@
 // src/controller/cartController.js
 const { admin, db } = require('../firebase'); // Vercel-ready direct imports
+const { createNotification } = require('../services/notificationService');
 
 // Add item to cart
 exports.addItemToCart = async (req, res) => {
@@ -29,6 +30,13 @@ exports.addItemToCart = async (req, res) => {
     }, { merge: true }); // Use merge to avoid overwriting other fields
 
     res.status(200).json({ success: true, message: "Item added to cart", itemId: item.id });
+
+    // Send a notification to the user
+    await createNotification(
+      userId,
+      'Item Added to Cart',
+      `You have added ${item.name} to your cart.`
+    );
   } catch (err) {
     console.error("Add to cart error:", err);
     res.status(500).json({ success: false, error: "Failed to add item to cart" });
@@ -92,6 +100,13 @@ exports.clearCart = async (req, res) => {
     await batch.commit();
 
     res.status(200).json({ success: true, message: "Cart cleared" });
+
+    // Send a notification to the user
+    await createNotification(
+      userId,
+      'Cart Cleared',
+      'Your cart has been cleared.'
+    );
   } catch (err) {
     console.error("Clear cart error:", err);
     res.status(500).json({ success: false, error: "Failed to clear cart" });

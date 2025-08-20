@@ -2,6 +2,7 @@
 
 const axios = require('axios'); // Ensure axios is installed: npm install axios
 const { admin, db, bucket } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 // --- IMPORTANT: Google Maps Geocoding API Configuration ---
 // Make sure you have enabled the "Geocoding API" in your Google Cloud Project.
@@ -209,6 +210,13 @@ const addLocation = async (req, res) => {
             id: newLocationRef.id,
             message: 'Location added successfully!'
         });
+
+        // Send a notification to the user
+        await createNotification(
+            targetUserId,
+            'Location Added',
+            `You have successfully added a new location: ${name}.`
+        );
     } catch (error) {
         console.error(`Error adding location for user ${targetUserId}:`, error);
         res.status(500).send('Failed to add location.');
@@ -353,6 +361,13 @@ const setPrimaryLocation = async (req, res) => {
         await batch.commit();
 
         res.status(200).send('Primary location set successfully.');
+
+        // Send a notification to the user
+        await createNotification(
+            targetUserId,
+            'Primary Location Set',
+            `You have set a new primary location.`
+        );
     } catch (error) {
         console.error(`Error setting primary location ${locationId} for user ${targetUserId}:`, error);
         res.status(500).send('Failed to set primary location.');

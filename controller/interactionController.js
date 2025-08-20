@@ -1,5 +1,6 @@
-ryrh // controller/interactionController.js
+// controller/interactionController.js
 const { admin, db } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 exports.likeRestaurant = async (req, res) => {
   const { id } = req.params;
@@ -23,6 +24,13 @@ exports.likeRestaurant = async (req, res) => {
     });
 
     res.json({ success: true });
+
+    // Send a notification to the user
+    await createNotification(
+      uid,
+      'Restaurant Liked',
+      `You have liked the restaurant ${restaurantDoc.data().name}.`
+    );
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -43,6 +51,13 @@ exports.shareRestaurant = async (req, res) => {
     });
 
     res.json({ success: true });
+
+    // Send a notification to the user
+    await createNotification(
+      uid,
+      'Menu Item Liked',
+      `You have liked the menu item ${menuItemDoc.data().name}.`
+    );
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

@@ -1,7 +1,8 @@
 // src/controller/reviewController.js
 
 // MODIFIED: Import admin and db directly from the firebase.js file
-const { admin, db } = require('../firebase'); 
+const { admin, db } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 // These functions assume that 'req.user' (authenticated user's UID and other claims)
 // is populated by the 'authenticate' middleware which is applied in the route.
@@ -84,6 +85,13 @@ updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly importe
 });
 
 res.status(201).json({ id: newReviewRef.id, message: 'Review submitted successfully!' });
+
+    // Send a notification to the user
+    await createNotification(
+      authenticatedUserId,
+      'Review Submitted',
+      `Thank you for your review of restaurant ${restaurantId}!`
+    );
 } catch (error) {
 console.error(`Error submitting review for restaurant ${restaurantId} by user ${authenticatedUserId}:`, error);
 if (error.message === "Restaurant does not exist.") {

@@ -1,7 +1,8 @@
 // src/controller/restaurantCRUD.js
-const { v4: uuidv4 } = require("uuid"); 
+const { v4: uuidv4 } = require("uuid");
 // MODIFIED: Import admin, db, and bucket directly from the firebase.js file
-const { admin, db, bucket } = require("../firebase"); 
+const { admin, db, bucket } = require("../firebase");
+const { createNotification } = require('../services/notificationService');
 
 const restaurantSample = require("../data/restaurants/01/details.json"); 
 const restaurantCollection = db.collection("restaurants");
@@ -163,6 +164,13 @@ const updateRestaurant = async (req, res) => {
   try {
     await restaurantCollection.doc(id).update(filteredData); // restaurantCollection uses 'db'
     res.status(200).send("Restaurant updated successfully.");
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Restaurant Updated',
+      `Your restaurant, ${data.name}, has been updated.`
+    );
   } catch (error) {
     console.error("Update Restaurant Error:", error);
     res.status(500).send("Failed to update restaurant.");
@@ -198,6 +206,13 @@ const deleteRestaurant = async (req, res) => {
 
     await restaurantCollection.doc(id).delete(); // restaurantCollection uses 'db'
     res.status(200).send("Restaurant deleted successfully.");
+
+    // Send a notification to the restaurant owner
+    await createNotification(
+      req.user.uid,
+      'Restaurant Deleted',
+      `Your restaurant has been deleted.`
+    );
   } catch (error) {
     console.error("Delete Restaurant Error:", error);
     res.status(500).send("Failed to delete restaurant.");

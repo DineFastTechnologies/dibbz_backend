@@ -2,7 +2,8 @@
 
 const axios = require('axios'); // For payment gateway calls (npm install axios if not already)
 // MODIFIED: Import admin, db, bucket directly from the firebase.js file
-const { admin, db, bucket } = require('../firebase'); 
+const { admin, db, bucket } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 // Helper to check if the authenticated user owns the target restaurant (for staff/admin actions)
 // MODIFIED: Uses directly imported 'db'
@@ -182,12 +183,19 @@ if (!await checkRestaurantOwnership(req, res, orderDoc.data().restaurantId)) {
 return;
 }
 
-await orderRef.update({
-status,
-updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly imported 'admin'
-});
+    await orderRef.update({
+      status,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly imported 'admin'
+    });
 
-res.status(200).send('Order status updated successfully.');
+    // Send a notification to the user
+    await createNotification(
+      orderDoc.data().userId,
+      'Order Status Updated',
+      `Your order #${orderId} is now ${status}.`
+    );
+
+    res.status(200).send('Order status updated successfully.');
 } catch (error) {
 console.error(`Error updating status for order ${orderId}:`, error);
 res.status(500).send('Failed to update order status.');
@@ -260,14 +268,21 @@ updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly importe
 transactionDetails: transactionDetails || {},
 });
 
-if (orderDoc.data().bookingId) {
-await db.collection('bookings').doc(orderDoc.data().bookingId).update({ // Use directly imported 'db'
+    if (orderDoc.data().bookingId) {
+      await db.collection('bookings').doc(orderDoc.data().bookingId).update({ // Use directly imported 'db'
 status: newOrderStatus,
 updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Use directly imported 'admin'
 });
-}
+    }
 
-res.status(200).send('Payment confirmed and order/booking updated.');
+    // Send a notification to the user
+    await createNotification(
+      orderDoc.data().userId,
+      'Payment Confirmed',
+      `Your payment for order #${orderId} has been confirmed.`
+    );
+
+    res.status(200).send('Payment confirmed and order/booking updated.');
 } catch (error) {
 console.error(`Error confirming payment for order ${orderId}:`, error);
 res.status(500).send('Failed to confirm payment.');

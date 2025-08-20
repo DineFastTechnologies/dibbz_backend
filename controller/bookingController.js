@@ -1,7 +1,8 @@
 // src/controller/bookingController.js
 
 // MODIFIED: Import admin, db, bucket directly from the firebase.js file
-const { admin, db, bucket } = require('../firebase'); 
+const { admin, db, bucket } = require('../firebase');
+const { createNotification } = require('../services/notificationService');
 
 // Helper to check if the authenticated user owns the target restaurant (for staff/admin actions)
 // MODIFIED: Uses directly imported 'db' and 'admin'
@@ -156,6 +157,13 @@ const createBooking = async (req, res) => {
     }
 
     res.status(201).json({ bookingId: bookingRef.id, message: 'Table reservation initiated. Awaiting payment/confirmation.' });
+
+    // Send a notification to the user
+    await createNotification(
+      userId,
+      'Booking Initiated',
+      `Your table reservation for ${partySize} at restaurant ${restaurantId} is pending payment.`
+    );
 
   } catch (error) {
     console.error(`Error creating booking for user ${userId}:`, error);

@@ -21,22 +21,22 @@ const { authenticate, checkRole } = require("./middleware/auth");
 const httpsRedirect = require("./middleware/https");
 const sanitizer = require("./middleware/sanitizer");
 const limit = require("./middleware/limit");
-const hpp = require("./middleware/hpp");
-const helmet = require("./middleware/helmet");
-const csrf = require("./middleware/csrf");
-const mongoSanitize = require("./middleware/mongoSanitize");
+const hpp = require("hpp");
+const helmet = require("helmet");
+const csrf = require("csurf");
+const mongoSanitize = require('express-mongo-sanitize');
 const fileUpload = require('express-fileupload');
-const xss = require('./middleware/xss');
+const xss = require('xss-clean');
+const cookieParser = require('cookie-parser');
 console.log("INDEX.JS: Auth middleware imported. Authenticate defined:", typeof authenticate, "CheckRole defined:", typeof checkRole);
 
 
 const app = express();
 app.use(xss());
 app.use(fileUpload());
-app.use(mongoSanitize);
-app.use(csrf);
-app.use(helmet);
-app.use(hpp);
+app.use(mongoSanitize());
+app.use(helmet());
+app.use(hpp());
 app.use(limit);
 app.use(sanitizer);
 app.use(httpsRedirect);
@@ -49,6 +49,8 @@ app.use(express.json());
 console.log("INDEX.JS: JSON body parser middleware applied.");
 app.use(express.urlencoded({ extended: true })); 
 console.log("INDEX.JS: URL-encoded body parser middleware applied.");
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
 
 
 // Middleware to attach db, bucket, and admin instances to the request object
@@ -74,7 +76,7 @@ const locationUtilityRoutes = require("./routes/locations");
 const reviewRoutes = require("./routes/reviews");  
 const orderRoutes = require("./routes/orders");    
 const bookingRoutes = require("./routes/bookings"); 
-const paymentRoutes = require("./routes/paymentRoutes");
+// const paymentRoutes = require("./routes/paymentRoutes");
 const cartRoutes = require("./routes/cartRouter");
 const authRoutes = require('./routes/authRoutes');
 const discountRoutes = require("./routes/discountRoutes");
@@ -99,7 +101,7 @@ app.use("/api/locations", authenticate, locationUtilityRoutes);
 app.use("/api/restaurants/:restaurantId/reviews", authenticate, reviewRoutes);
 app.use("/api/orders", authenticate, orderRoutes);
 app.use("/api/bookings", authenticate, bookingRoutes);
-app.use("/api/payments", authenticate, paymentRoutes);
+// app.use("/api/payments", authenticate, paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/discounts", authenticate, checkRole('admin'), discountRoutes);

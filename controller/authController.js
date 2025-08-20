@@ -85,6 +85,17 @@ exports.verifyOtp = async (req, res) => {
 
 exports.googleLogin = async (req, res) => {
   const { idToken } = req.body;
+
+  // --- ADDED LOGS ---
+  console.log("GOOGLE LOGIN: Initiated.");
+  console.log("GOOGLE LOGIN: Received idToken:", idToken ? idToken.substring(0, 30) + "..." : "Not provided");
+  console.log("GOOGLE LOGIN: GOOGLE_CLIENT_ID from env:", process.env.GOOGLE_CLIENT_ID ? "Loaded" : "MISSING!");
+  // --- END ADDED LOGS ---
+
+  if (!idToken) {
+    return res.status(400).json({ error: "idToken is required" });
+  }
+
   try {
     const ticket = await client.verifyIdToken({
       idToken,
@@ -92,25 +103,50 @@ exports.googleLogin = async (req, res) => {
     });
     const payload = ticket.getPayload();
     const { email, name, picture } = payload;
-    let user = await admin.auth().getUserByEmail(email).catch(() => null);
-    if (!user) {
-      user = await admin.auth().createUser({
-        email,
-        displayName: name,
-        photoURL: picture,
-      });
+
+    console.log(`GOOGLE LOGIN: Token verified for email: ${email}`);
+
+    let user;
+    try {
+      user = await admin.auth().getUserByEmail(email);
+      console.log(`GOOGLE LOGIN: Existing user found: ${user.uid}`);
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') {
+        console.log(`GOOGLE LOGIN: User not found, creating new user for email: ${email}`);
+        user = await admin.auth().createUser({
+          email,
+          displayName: name,
+          photoURL: picture,
+          emailVerified: true,
+        });
+        console.log(`GOOGLE LOGIN: New user created: ${user.uid}`);
+      } else {
+        throw error; // Re-throw other auth errors
+      }
     }
+
     const token = await admin.auth().createCustomToken(user.uid);
+    console.log(`GOOGLE LOGIN: Custom token generated for UID: ${user.uid}`);
     res.json({ token });
 
     // Send a welcome notification
+    console.log(`GOOGLE LOGIN: Attempting to send welcome notification to ${user.uid}`);
     await createNotification(
       user.uid,
       'Welcome to Dibbz!',
       'We are excited to have you on board.'
     );
+    console.log(`GOOGLE LOGIN: Welcome notification sent successfully.`);
+
   } catch (error) {
-    res.status(401).json({ error: 'Invalid Google token' });
+    // --- IMPROVED ERROR LOGGING ---
+    console.error("GOOGLE LOGIN ERROR:", error.message);
+    console.error("Error Details:", error);
+    res.status(401).json({ 
+      error: 'Invalid Google token or server misconfiguration.',
+      details: error.message 
+    });
+    // --- END IMPROVED ERROR LOGGING ---
   }
 };
 

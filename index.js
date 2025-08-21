@@ -20,27 +20,13 @@ console.log("INDEX.JS: Dotenv loaded.");
 // --- Middleware Imports ---
 console.log("INDEX.JS: Attempting to import auth middleware.");
 const { authenticate, checkRole } = require("./middleware/auth"); 
-const httpsRedirect = require("./middleware/https");
-const sanitizer = require("./middleware/sanitizer");
-const limit = require("./middleware/limit");
-const hpp = require("hpp");
-const helmet = require("helmet");
-const mongoSanitize = require('express-mongo-sanitize');
 const fileUpload = require('express-fileupload');
-const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
 console.log("INDEX.JS: Auth middleware imported. Authenticate defined:", typeof authenticate, "CheckRole defined:", typeof checkRole);
 
 
 const app = express();
-app.use(xss());
 app.use(fileUpload());
-app.use(mongoSanitize());
-app.use(helmet());
-app.use(hpp());
-app.use(limit);
-app.use(sanitizer);
-app.use(httpsRedirect);
 console.log("INDEX.JS: Express app created.");
 
 // --- Core Express Middleware ---
@@ -98,19 +84,19 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/restaurant", restaurantRoutes);
-app.use("/api/users", authenticate, userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/restaurants/:restaurantId/menu", menuRoutes);
-app.use("/api/restaurants/:restaurantId/tables", authenticate, checkRole('restaurant_owner', 'admin'), tableRoutes);
-app.use("/api/locations", authenticate, locationUtilityRoutes);
-app.use("/api/restaurants/:restaurantId/reviews", authenticate, reviewRoutes);
-app.use("/api/orders", authenticate, orderRoutes);
-app.use("/api/bookings", authenticate, bookingRoutes);
-// app.use("/api/payments", authenticate, paymentRoutes);
-app.use("/api/cart", authenticate, cartRoutes);
-app.use("/api/discounts", authenticate, checkRole('admin'), discountRoutes);
-app.use("/api/interactions", authenticate, interactionRoutes);
+app.use("/api/restaurants/:restaurantId/tables", tableRoutes);
+app.use("/api/locations", locationUtilityRoutes);
+app.use("/api/restaurants/:restaurantId/reviews", reviewRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/bookings", bookingRoutes);
+// app.use("/api/payments", paymentRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/discounts", discountRoutes);
+app.use("/api/interactions", interactionRoutes);
 app.use("/api/categories", categoryRoutes);
-app.use("/api/notifications", authenticate, notificationRoutes);
+app.use("/api/notifications", notificationRoutes);
 console.log("INDEX.JS: All routes registered.");
 
 

@@ -52,7 +52,17 @@ console.log("INDEX.JS: JSON body parser middleware applied.");
 app.use(express.urlencoded({ extended: true })); 
 console.log("INDEX.JS: URL-encoded body parser middleware applied.");
 app.use(cookieParser());
+
+// --- Import and Register Auth Routes BEFORE CSRF ---
+// Auth routes use token-based verification and should be exempt from CSRF.
+console.log("INDEX.JS: Importing auth routes...");
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+console.log("INDEX.JS: Auth routes registered.");
+
+// --- CSRF Protection for Other Routes ---
 app.use(csrf({ cookie: true }));
+console.log("INDEX.JS: CSRF protection middleware applied.");
 
 
 // Middleware to attach db, bucket, and admin instances to the request object
@@ -61,7 +71,6 @@ app.use((req, res, next) => {
   req.db = db;
   req.bucket = bucket;
   req.admin = admin;
-  req.authenticate = authenticate; 
   req.checkRole = checkRole;       
   next();
 });
@@ -80,7 +89,7 @@ const orderRoutes = require("./routes/orders");
 const bookingRoutes = require("./routes/bookings"); 
 // const paymentRoutes = require("./routes/paymentRoutes");
 const cartRoutes = require("./routes/cartRouter");
-const authRoutes = require('./routes/authRoutes');
+// Auth routes are now imported and registered before CSRF middleware
 const discountRoutes = require("./routes/discountRoutes");
 const interactionRoutes = require("./routes/interactions");
 const categoryRoutes = require("./routes/categories");
@@ -105,7 +114,7 @@ app.use("/api/orders", authenticate, orderRoutes);
 app.use("/api/bookings", authenticate, bookingRoutes);
 // app.use("/api/payments", authenticate, paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
-app.use('/api/auth', authRoutes);
+// Auth routes are now registered before CSRF middleware
 app.use("/api/discounts", authenticate, checkRole('admin'), discountRoutes);
 app.use("/api/interactions", authenticate, interactionRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -114,31 +123,19 @@ console.log("INDEX.JS: All routes registered.");
 
 
 // Root endpoint for a basic health check
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
     const endpoints = listEndpoints(app);
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    const endpointDetails = await Promise.all(endpoints.map(async endpoint => {
-        const middleware = Array.isArray(endpoint.middleware)
+    const endpointDetails = endpoints.map(endpoint => {
+        const middleware = Array.isArray(endpoint.middleware) 
             ? endpoint.middleware.map(m => m.name || 'anonymous')
             : [];
-
-        let status = 'unknown';
-        if (endpoint.methods.includes('GET') && endpoint.path !== '/') {
-            try {
-                await axios.get(`${baseUrl}${endpoint.path}`);
-                status = 'ok';
-            } catch (error) {
-                status = 'error';
-            }
-        }
 
         return {
             path: endpoint.path,
             methods: endpoint.methods.join(', '),
-            middleware: middleware.join(', '),
-            status
+            middleware: middleware.join(', ')
         };
-    }));
+    });
 
     let html = `
         <h1>Dibbz Backend Endpoints</h1>
@@ -149,8 +146,6 @@ app.get("/", async (req, res) => {
             th { background-color: #f2f2f2; }
             tr:nth-child(even) { background-color: #f9f9f9; }
             tr:hover { background-color: #f1f1f1; }
-            .status-ok { color: green; }
-            .status-error { color: red; }
         </style>
         <table>
             <thead>
@@ -158,7 +153,6 @@ app.get("/", async (req, res) => {
                     <th>Path</th>
                     <th>Methods</th>
                     <th>Middleware</th>
-                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -170,7 +164,6 @@ app.get("/", async (req, res) => {
                 <td>${endpoint.path}</td>
                 <td>${endpoint.methods}</td>
                 <td>${endpoint.middleware}</td>
-                <td class="status-${endpoint.status}">${endpoint.status}</td>
             </tr>
         `;
     });

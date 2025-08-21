@@ -25,7 +25,6 @@ const sanitizer = require("./middleware/sanitizer");
 const limit = require("./middleware/limit");
 const hpp = require("hpp");
 const helmet = require("helmet");
-const csrf = require("csurf");
 const mongoSanitize = require('express-mongo-sanitize');
 const fileUpload = require('express-fileupload');
 const xss = require('xss-clean');
@@ -61,8 +60,8 @@ app.use('/api/auth', authRoutes);
 console.log("INDEX.JS: Auth routes registered.");
 
 // --- CSRF Protection for Other Routes ---
-app.use(csrf({ cookie: true }));
-console.log("INDEX.JS: CSRF protection middleware applied.");
+// app.use(csrf({ cookie: true }));
+// console.log("INDEX.JS: CSRF protection middleware applied.");
 
 
 // Middleware to attach db, bucket, and admin instances to the request object

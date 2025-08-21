@@ -27,6 +27,10 @@ exports.sendOtp = async (req, res) => {
       return res.status(500).json({ error: "Server misconfiguration: Twilio environment variables missing" });
     }
 
+    if (!process.env.TWILIO_VERIFY_SERVICE_SID) {
+      return res.status(500).json({ error: "Server misconfiguration: Twilio Verify Service SID is missing" });
+    }
+
     const verification = await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SERVICE_SID)
       .verifications

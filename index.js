@@ -6,6 +6,8 @@ console.log("INDEX.JS: Starting application initialization sequence...");
 
 const express = require("express");
 const cors = require("cors");
+const listEndpoints = require("express-list-endpoints");
+const axios = require("axios");
 
 // CORRECTED PATH: Firebase initialization import
 console.log("INDEX.JS: Attempting to import Firebase config.");
@@ -112,7 +114,73 @@ console.log("INDEX.JS: All routes registered.");
 
 
 // Root endpoint for a basic health check
-app.get("/", (req, res) => res.send("Dibbz Backend Running"));
+app.get("/", async (req, res) => {
+    const endpoints = listEndpoints(app);
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const endpointDetails = await Promise.all(endpoints.map(async endpoint => {
+        const middleware = Array.isArray(endpoint.middleware)
+            ? endpoint.middleware.map(m => m.name || 'anonymous')
+            : [];
+
+        let status = 'unknown';
+        if (endpoint.methods.includes('GET') && endpoint.path !== '/') {
+            try {
+                await axios.get(`${baseUrl}${endpoint.path}`);
+                status = 'ok';
+            } catch (error) {
+                status = 'error';
+            }
+        }
+
+        return {
+            path: endpoint.path,
+            methods: endpoint.methods.join(', '),
+            middleware: middleware.join(', '),
+            status
+        };
+    }));
+
+    let html = `
+        <h1>Dibbz Backend Endpoints</h1>
+        <style>
+            body { font-family: Arial, sans-serif; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            tr:hover { background-color: #f1f1f1; }
+            .status-ok { color: green; }
+            .status-error { color: red; }
+        </style>
+        <table>
+            <thead>
+                <tr>
+                    <th>Path</th>
+                    <th>Methods</th>
+                    <th>Middleware</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    endpointDetails.forEach(endpoint => {
+        html += `
+            <tr>
+                <td>${endpoint.path}</td>
+                <td>${endpoint.methods}</td>
+                <td>${endpoint.middleware}</td>
+                <td class="status-${endpoint.status}">${endpoint.status}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    `;
+    res.send(html);
+});
 console.log("INDEX.JS: Root health check route '/' defined.");
 
 

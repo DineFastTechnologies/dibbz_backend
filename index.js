@@ -52,16 +52,11 @@ app.use(express.urlencoded({ extended: true }));
 console.log("INDEX.JS: URL-encoded body parser middleware applied.");
 app.use(cookieParser());
 
-// --- Import and Register Auth Routes BEFORE CSRF ---
-// Auth routes use token-based verification and should be exempt from CSRF.
+// --- Import and Register Auth Routes ---
 console.log("INDEX.JS: Importing auth routes...");
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 console.log("INDEX.JS: Auth routes registered.");
-
-// --- CSRF Protection for Other Routes ---
-// app.use(csrf({ cookie: true }));
-// console.log("INDEX.JS: CSRF protection middleware applied.");
 
 
 // Middleware to attach db, bucket, and admin instances to the request object
@@ -88,7 +83,6 @@ const orderRoutes = require("./routes/orders");
 const bookingRoutes = require("./routes/bookings"); 
 // const paymentRoutes = require("./routes/paymentRoutes");
 const cartRoutes = require("./routes/cartRouter");
-// Auth routes are now imported and registered before CSRF middleware
 const discountRoutes = require("./routes/discountRoutes");
 const interactionRoutes = require("./routes/interactions");
 const categoryRoutes = require("./routes/categories");
@@ -113,7 +107,6 @@ app.use("/api/orders", authenticate, orderRoutes);
 app.use("/api/bookings", authenticate, bookingRoutes);
 // app.use("/api/payments", authenticate, paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
-// Auth routes are now registered before CSRF middleware
 app.use("/api/discounts", authenticate, checkRole('admin'), discountRoutes);
 app.use("/api/interactions", authenticate, interactionRoutes);
 app.use("/api/categories", categoryRoutes);

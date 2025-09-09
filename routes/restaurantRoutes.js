@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const {
   createRestaurant,
+  createNewRestaurant,
   getAllRestaurants,
   getRestaurantById,
   updateRestaurant,
@@ -15,7 +16,13 @@ const {
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/", createRestaurant);
+// POST /restaurant/seed - For initial data seeding (consider removing in production)
+router.post("/seed", createRestaurant);
+
+// POST /restaurant - Create new restaurant (requires authentication)
+router.post("/", createNewRestaurant);
+
+// GET /restaurant - Get all restaurants (publicly accessible)
 router.get("/", getAllRestaurants);
 router.get("/:id", getRestaurantById);
 // ✅ Update restaurant (must own it or be admin)

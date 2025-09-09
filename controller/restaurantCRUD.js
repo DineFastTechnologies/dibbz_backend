@@ -4,7 +4,125 @@ const { admin, db, bucket } = require("../firebase");
 
 const restaurantCollection = db.collection("restaurants");
 
-// ✅ CREATE restaurant from request body
+// Helper function to check if the authenticated user owns the target restaurant
+// MODIFIED: Uses directly imported 'db' and 'admin'
+const checkRestaurantOwnership = async (req, res, restaurantId) => {
+  const authenticatedUserId = req.user.uid;
+
+  try {
+    const userDoc = await db.collection('users').doc(authenticatedUserId).get(); // Use directly imported 'db'
+    if (!userDoc.exists) {
+      res.status(403).send('Forbidden: User profile not found.');
+      return false;
+    }
+    const userRole = userDoc.data()?.role;
+    const userOwnedRestaurantId = userDoc.data()?.ownedRestaurantId;
+
+    if (userRole === 'admin') { 
+        return true;
+    }
+    if (userRole === 'restaurant_owner' && userOwnedRestaurantId === restaurantId) {
+        return true;
+    }
+
+    res.status(403).send('Forbidden: You do not own this restaurant or lack permissions.');
+    return false;
+  } catch (error) {
+    console.error('Error checking restaurant ownership:', error);
+    res.status(500).send('Server error during ownership check.');
+    return false;
+  }
+};
+
+
+// CREATE (New Restaurant - for actual restaurant creation)
+// MODIFIED: Uses directly imported 'db'
+const createNewRestaurant = async (req, res) => {
+  try {
+    console.log('Creating new restaurant with data:', req.body);
+    
+    const {
+      name,
+      cuisine,
+      description,
+      address,
+      city,
+      state,
+      zipCode,
+      phoneNumber,
+      email,
+      openingTime,
+      closingTime,
+      capacity,
+      priceRange,
+      isPureVeg
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !cuisine || !address) {
+      return res.status(400).json({ error: "Name, cuisine, and address are required" });
+    }
+
+    const restaurantId = uuidv4();
+    
+    const restaurantData = {
+      id: restaurantId,
+      name,
+      cuisine,
+      description: description || '',
+      address,
+      city: city || '',
+      state: state || '',
+      zipCode: zipCode || '',
+      phoneNumber: phoneNumber || '',
+      email: email || '',
+      openingTime: openingTime || '09:00',
+      closingTime: closingTime || '22:00',
+      capacity: capacity || 50,
+      priceRange: priceRange || 'mid-range',
+      isPureVeg: isPureVeg || false,
+      isActive: true,
+      rating: 0,
+      totalReviews: 0,
+      createdAt: admin.firestore.Timestamp.now(),
+      updatedAt: admin.firestore.Timestamp.now(),
+      // Default location (you can enhance this with geocoding later)
+      location: {
+        lat: 0,
+        lng: 0
+      },
+      images: [],
+      foodCategories: [cuisine]
+    };
+
+    // If user is authenticated, associate restaurant with user
+    if (req.user) {
+      restaurantData.ownerId = req.user.uid;
+      
+      // Update user's role to restaurant_owner and link restaurant
+      await db.collection('users').doc(req.user.uid).update({
+        role: 'restaurant_owner',
+        ownedRestaurantId: restaurantId,
+        updatedAt: admin.firestore.Timestamp.now()
+      });
+    }
+
+    await restaurantCollection.doc(restaurantId).set(restaurantData);
+    
+    console.log('Restaurant created successfully:', restaurantId);
+    res.status(201).json({ 
+      message: "Restaurant created successfully", 
+      restaurantId: restaurantId,
+      restaurant: restaurantData 
+    });
+  } catch (error) {
+    console.error("Create restaurant error:", error);
+    res.status(500).json({ error: "Failed to create restaurant" });
+  }
+};
+
+// CREATE (Seeding function)
+// MODIFIED: Uses directly imported 'db'
 const createRestaurant = async (req, res) => {
   try {
     const data = req.body;
@@ -299,6 +417,7 @@ const uploadRestaurantImage = async (req, res) => {
 
 module.exports = {
   createRestaurant,
+  createNewRestaurant,
   getAllRestaurants,
   getRestaurantById,
   updateRestaurant,

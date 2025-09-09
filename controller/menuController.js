@@ -150,9 +150,84 @@ const deleteMenuItem = async (req, res) => {
   }
 };
 
+// CREATE multiple menu items at once (batch)
+// MODIFIED: Uses directly imported 'db' and 'admin'
+const createMenuItems = async (req, res) => {
+  const restaurantId = req.params.restaurantId;
+  const { menuItems } = req.body;
+
+  console.log(`[menuController] createMenuItems: Batch creating ${menuItems?.length || 0} items for restaurant: "${restaurantId}"`);
+
+  if (!menuItems || !Array.isArray(menuItems) || menuItems.length === 0) {
+    return res.status(400).json({ error: 'menuItems array is required and must not be empty' });
+  }
+
+  // Check ownership (if user is authenticated)
+  if (req.user && !await checkRestaurantOwnership(req, res)) {
+    return; // checkRestaurantOwnership handles the response
+  }
+
+  try {
+    // Verify restaurant exists
+    const restaurantDocRef = db.collection('restaurants').doc(restaurantId);
+    const restaurantDocSnapshot = await restaurantDocRef.get();
+
+    if (!restaurantDocSnapshot.exists) {
+      return res.status(404).json({ error: 'Restaurant not found' });
+    }
+
+    const batch = db.batch();
+    const menuItemsCollection = restaurantDocRef.collection('menuItems');
+    const createdItems = [];
+
+    for (const item of menuItems) {
+      const { name, description, price, category, isVeg, isAvailable, imageUrl } = item;
+
+      // Validate required fields
+      if (!name || !description || price === undefined) {
+        return res.status(400).json({ 
+          error: 'Each menu item must have name, description, and price' 
+        });
+      }
+
+      const menuItemId = db.collection('temp').doc().id; // Generate unique ID
+      const menuItemRef = menuItemsCollection.doc(menuItemId);
+
+      const menuItemData = {
+        id: menuItemId,
+        name,
+        description,
+        price: parseFloat(price),
+        category: category || 'Main Course',
+        isVeg: isVeg !== undefined ? isVeg : true,
+        isAvailable: isAvailable !== undefined ? isAvailable : true,
+        imageUrl: imageUrl || null,
+        restaurantId,
+        createdAt: admin.firestore.Timestamp.now(),
+        updatedAt: admin.firestore.Timestamp.now()
+      };
+
+      batch.set(menuItemRef, menuItemData);
+      createdItems.push(menuItemData);
+    }
+
+    await batch.commit();
+
+    console.log(`[menuController] Successfully created ${createdItems.length} menu items for restaurant: "${restaurantId}"`);
+    res.status(201).json({ 
+      message: `Successfully created ${createdItems.length} menu items`, 
+      menuItems: createdItems 
+    });
+  } catch (error) {
+    console.error(`[menuController] Error batch creating menu items for restaurant "${restaurantId}":`, error);
+    res.status(500).json({ error: 'Failed to create menu items' });
+  }
+};
+
 module.exports = {
   getMenuItems,
   createMenuItem,
+  createMenuItems,
   updateMenuItem,
   deleteMenuItem,
 };

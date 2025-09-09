@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_023",
+  "name": "The Kebab Shop",
+  "location": {
+    "address": "191, Lucknow",
+    "lat": 26.846,
+    "lng": 80.946
+  },
+  "cuisine": ["North Indian", "Kebabs"],
+  "rating": 4.8,
+  "priceLevel": "$$$",
+  "openStatus": "open",
+  "tags": ["Fine Dining", "Authentic", "Kebabs"],
+  "contactNumber": "+91-9876543229",
+  "images": [
+    "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=780&q=80",
+    "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=765&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=749&q=80",
+  "dineType": "Fine Dine",
+  "createdAt": "2025-08-02T19:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["North Indian", "Kebabs", "Biryani", "Desserts"],
+  "ratingSum": 4.8,
+  "reviewCount": 1,
+  "averageRating": 4.8
+}

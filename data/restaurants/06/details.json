@@ -1,0 +1,27 @@
+{
+  "id": "restaurant_006",
+  "name": "Coastal Reef",
+  "location": {
+    "address": "202, Beach Road, Goa",
+    "lat": 15.498,
+    "lng": 73.828
+  },
+  "cuisine": ["Seafood", "Goan"],
+  "rating": 4.7,
+  "priceLevel": "$$$",
+  "openStatus": "open",
+  "tags": ["Sea View", "Fine Dining", "Fresh Catch"],
+  "contactNumber": "+91-9876543212",
+  "images": [
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=781&q=80"
+  ],
+  "bannerImage": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+  "dineType": "Fine Dine",
+  "createdAt": "2025-07-16T13:00:00Z",
+  "isPureVeg": false,
+  "foodCategories": ["Seafood", "Goan", "Curries", "Appetizers"],
+  "ratingSum": 4.7,
+  "reviewCount": 1,
+  "averageRating": 4.7
+}

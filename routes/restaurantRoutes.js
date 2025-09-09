@@ -10,6 +10,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const {
   createRestaurant,
+  createNewRestaurant,
   getAllRestaurants,
   getRestaurantById,
   updateRestaurant,
@@ -21,6 +22,9 @@ const {
 
 // POST /restaurant/seed - For initial data seeding (consider removing in production)
 router.post("/seed", createRestaurant);
+
+// POST /restaurant - Create new restaurant (requires authentication)
+router.post("/", authenticate, createNewRestaurant);
 
 // GET /restaurant - Get all restaurants (publicly accessible)
 router.get("/", getAllRestaurants);

@@ -5,6 +5,7 @@ const router = express.Router({ mergeParams: true });
 const {
   getMenuItems,
   createMenuItem,
+  createMenuItems,
   updateMenuItem,
   deleteMenuItem,
 } = require('../controller/menuController'); // This controller will be created next
@@ -14,6 +15,9 @@ router.get('/', getMenuItems);
 
 // POST a new menu item for a specific restaurant (owner-only)
 router.post('/', createMenuItem);
+
+// POST batch create multiple menu items for a specific restaurant (owner-only)
+router.post('/batch', createMenuItems);
 
 // PUT update a specific menu item (owner-only)
 router.put('/:menuItemId', updateMenuItem);

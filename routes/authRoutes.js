@@ -2,7 +2,23 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controller/authController');
 
-// Avoid caching OTP endpoints on edge/CDN
+// Firebase Auth endpoints
+router.post('/verify-token', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  return authController.verifyToken(req, res, next);
+});
+
+router.post('/google-signin', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  return authController.googleSignIn(req, res, next);
+});
+
+router.post('/email-signin', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  return authController.emailSignIn(req, res, next);
+});
+
+// Legacy OTP endpoints (deprecated)
 router.post('/send-otp', (req, res, next) => {
   res.set('Cache-Control', 'no-store');
   return authController.sendOtp(req, res, next);

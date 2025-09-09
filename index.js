@@ -60,6 +60,8 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const cartRoutes = require("./routes/cartRouter");
 const authRoutes = require('./routes/authRoutes');
 const discountRoutes = require("./routes/discountRoutes");
+const categoryRoutes = require("./routes/categories");
+const interactionRoutes = require("./routes/interactions");
 
 
 
@@ -80,6 +82,8 @@ app.use("/api/payments", authenticate, paymentRoutes);
 app.use("/api/cart", authenticate, cartRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/discounts", discountRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/interactions", interactionRoutes);
 console.log("INDEX.JS: All routes registered.");
 
 

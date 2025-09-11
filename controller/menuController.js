@@ -229,6 +229,10 @@ const createMenuItems = async (req, res) => {
  */
 const checkMenuSetup = async (req, res) => {
   const restaurantId = req.params.restaurantId;
+  
+  console.log(`[menuController] Received restaurant ID: "${restaurantId}"`);
+  console.log(`[menuController] Restaurant ID type: ${typeof restaurantId}`);
+  console.log(`[menuController] Restaurant ID length: ${restaurantId?.length}`);
 
   try {
     // Check if restaurant exists
@@ -236,23 +240,120 @@ const checkMenuSetup = async (req, res) => {
     const restaurantDoc = await restaurantDocRef.get();
 
     if (!restaurantDoc.exists) {
+      console.log(`[menuController] Restaurant document "${restaurantId}" does not exist`);
       return res.status(404).json({ hasMenu: false, error: 'Restaurant not found.' });
     }
 
-    // Check if restaurant has any menu items
-    const menuItemsSnapshot = await restaurantDocRef
-      .collection('menuItems')
-      .limit(1)
-      .get();
+    console.log(`[menuController] Restaurant document "${restaurantId}" exists, checking for menu collections...`);
 
-    const hasMenu = !menuItemsSnapshot.empty;
+    // Check if restaurant has any menu items in either 'menuItems' or 'menu' collection
+    console.log(`[menuController] Checking menuItems collection for restaurant "${restaurantId}"`);
+    let menuItemsSnapshot;
+    try {
+      menuItemsSnapshot = await restaurantDocRef
+        .collection('menuItems')
+        .limit(1)
+        .get();
+      console.log(`[menuController] menuItems query successful: empty = ${menuItemsSnapshot.empty}, size = ${menuItemsSnapshot.size}`);
+    } catch (error) {
+      console.error(`[menuController] Error querying menuItems collection:`, error);
+      menuItemsSnapshot = { empty: true, size: 0 };
+    }
+
+    let hasMenu = !menuItemsSnapshot.empty;
+    console.log(`[menuController] menuItems collection check: empty = ${menuItemsSnapshot.empty}, hasMenu = ${hasMenu}`);
     
-    console.log(`[menuController] Menu setup check for restaurant "${restaurantId}": hasMenu = ${hasMenu}`);
+    // If no items in 'menuItems', check 'menu' collection for backward compatibility
+    if (!hasMenu) {
+      console.log(`[menuController] Checking menu collection for restaurant "${restaurantId}"`);
+      let menuSnapshot;
+      try {
+        menuSnapshot = await restaurantDocRef
+          .collection('menu')
+          .limit(1)
+          .get();
+        console.log(`[menuController] menu query successful: empty = ${menuSnapshot.empty}, size = ${menuSnapshot.size}`);
+      } catch (error) {
+        console.error(`[menuController] Error querying menu collection:`, error);
+        menuSnapshot = { empty: true, size: 0 };
+      }
+      hasMenu = !menuSnapshot.empty;
+      console.log(`[menuController] menu collection check: empty = ${menuSnapshot.empty}, hasMenu = ${hasMenu}`);
+    }
+    
+    console.log(`[menuController] Final menu setup check for restaurant "${restaurantId}": hasMenu = ${hasMenu}`);
     
     res.json({ hasMenu });
   } catch (error) {
     console.error(`[menuController] Error checking menu setup for restaurant "${restaurantId}":`, error);
     res.status(500).json({ hasMenu: false, error: 'Failed to check menu setup' });
+  }
+};
+
+// Debug function to test menu detection
+const debugMenuCheck = async (req, res) => {
+  const restaurantId = req.params.restaurantId;
+  
+  try {
+    console.log(`[DEBUG] Testing menu check for restaurant: ${restaurantId}`);
+    
+    // Check if restaurant exists
+    const restaurantDocRef = db.collection('restaurants').doc(restaurantId);
+    const restaurantDoc = await restaurantDocRef.get();
+    
+    if (!restaurantDoc.exists) {
+      console.log(`[DEBUG] Restaurant document does not exist`);
+      return res.json({ 
+        restaurantExists: false, 
+        message: 'Restaurant not found',
+        restaurantId 
+      });
+    }
+    
+    console.log(`[DEBUG] Restaurant exists, checking collections...`);
+    console.log(`[DEBUG] Restaurant data:`, restaurantDoc.data());
+    
+    // Check menuItems collection
+    console.log(`[DEBUG] Checking menuItems collection...`);
+    const menuItemsSnapshot = await restaurantDocRef
+      .collection('menuItems')
+      .limit(5)
+      .get();
+    
+    console.log(`[DEBUG] menuItems collection: empty=${menuItemsSnapshot.empty}, size=${menuItemsSnapshot.size}`);
+    
+    // Check menu collection
+    console.log(`[DEBUG] Checking menu collection...`);
+    const menuSnapshot = await restaurantDocRef
+      .collection('menu')
+      .limit(5)
+      .get();
+    
+    console.log(`[DEBUG] menu collection: empty=${menuSnapshot.empty}, size=${menuSnapshot.size}`);
+    
+    const result = {
+      restaurantExists: true,
+      restaurantId,
+      restaurantData: restaurantDoc.data(),
+      menuItemsCollection: {
+        exists: !menuItemsSnapshot.empty,
+        count: menuItemsSnapshot.size,
+        items: menuItemsSnapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }))
+      },
+      menuCollection: {
+        exists: !menuSnapshot.empty,
+        count: menuSnapshot.size,
+        items: menuSnapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }))
+      },
+      hasMenu: !menuItemsSnapshot.empty || !menuSnapshot.empty
+    };
+    
+    console.log(`[DEBUG] Final result:`, JSON.stringify(result, null, 2));
+    res.json(result);
+    
+  } catch (error) {
+    console.error(`[DEBUG] Error:`, error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -263,4 +364,5 @@ module.exports = {
   updateMenuItem,
   deleteMenuItem,
   checkMenuSetup,
+  debugMenuCheck,
 };

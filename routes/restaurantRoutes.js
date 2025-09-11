@@ -9,7 +9,8 @@ const {
   updateRestaurant,
   deleteRestaurant,
   getNearbyRestaurants,
-  uploadRestaurantImage
+  uploadRestaurantImage,
+  checkRestaurantSetup
 } = require("../controller/restaurantCRUD");
 
 //const { authenticate } = require("../middleware/authMiddleware"); 
@@ -33,5 +34,7 @@ router.delete("/:id", deleteRestaurant);
 router.get("/search/nearby", getNearbyRestaurants);
 // ✅ Upload image
 router.post("/:id/images", upload.single("image"), uploadRestaurantImage);
+// ✅ Check if user has completed restaurant setup
+router.get("/check-setup/:userId", checkRestaurantSetup);
 
 module.exports = router;

@@ -24,6 +24,8 @@ const authenticate = async (req, res, next) => {
     req.user = decodedToken;
     return next();
   } catch (error) {
+    console.error('Authentication error:', error);
+    
     if (error.code === 'auth/id-token-expired') {
       return res.status(401).send('Unauthorized: Authentication token expired. Please log in again.');
     }
@@ -52,6 +54,7 @@ const checkRole = (requiredRole) => {
       }
       return res.status(403).send(`Forbidden: Requires '${requiredRole}' role.`);
     } catch (error) {
+      console.error('Role check error:', error);
       return res.status(500).send('Server error during role verification.');
     }
   };

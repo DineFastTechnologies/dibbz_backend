@@ -224,10 +224,43 @@ const createMenuItems = async (req, res) => {
   }
 };
 
+/**
+ * GET check if restaurant has menu setup
+ */
+const checkMenuSetup = async (req, res) => {
+  const restaurantId = req.params.restaurantId;
+
+  try {
+    // Check if restaurant exists
+    const restaurantDocRef = db.collection('restaurants').doc(restaurantId);
+    const restaurantDoc = await restaurantDocRef.get();
+
+    if (!restaurantDoc.exists) {
+      return res.status(404).json({ hasMenu: false, error: 'Restaurant not found.' });
+    }
+
+    // Check if restaurant has any menu items
+    const menuItemsSnapshot = await restaurantDocRef
+      .collection('menuItems')
+      .limit(1)
+      .get();
+
+    const hasMenu = !menuItemsSnapshot.empty;
+    
+    console.log(`[menuController] Menu setup check for restaurant "${restaurantId}": hasMenu = ${hasMenu}`);
+    
+    res.json({ hasMenu });
+  } catch (error) {
+    console.error(`[menuController] Error checking menu setup for restaurant "${restaurantId}":`, error);
+    res.status(500).json({ hasMenu: false, error: 'Failed to check menu setup' });
+  }
+};
+
 module.exports = {
   getMenuItems,
   createMenuItem,
   createMenuItems,
   updateMenuItem,
   deleteMenuItem,
+  checkMenuSetup,
 };

@@ -415,6 +415,51 @@ const uploadRestaurantImage = async (req, res) => {
   }
 };
 
+// Check if user has completed restaurant setup
+const checkRestaurantSetup = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Check if user has a restaurant
+    const userDoc = await db.collection('users').doc(userId).get();
+    
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userDoc.data();
+    const ownedRestaurantId = userData?.ownedRestaurantId;
+
+    if (ownedRestaurantId) {
+      // Check if the restaurant exists and has required details
+      const restaurantDoc = await db.collection('restaurants').doc(ownedRestaurantId).get();
+      
+      if (restaurantDoc.exists) {
+        const restaurantData = restaurantDoc.data();
+        const hasCompleteDetails = restaurantData?.name && 
+                                 restaurantData?.address && 
+                                 restaurantData?.phoneNumber &&
+                                 restaurantData?.cuisineType;
+        
+        return res.json({ 
+          hasRestaurant: true, 
+          restaurantId: ownedRestaurantId,
+          isComplete: hasCompleteDetails
+        });
+      }
+    }
+
+    return res.json({ hasRestaurant: false });
+  } catch (error) {
+    console.error("Error checking restaurant setup:", error);
+    return res.status(500).json({ error: "Failed to check restaurant setup" });
+  }
+};
+
 module.exports = {
   createRestaurant,
   createNewRestaurant,
@@ -424,4 +469,5 @@ module.exports = {
   deleteRestaurant,
   getNearbyRestaurants,
   uploadRestaurantImage,
+  checkRestaurantSetup,
 };

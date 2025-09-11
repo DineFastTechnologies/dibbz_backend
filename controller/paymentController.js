@@ -3,10 +3,16 @@ const Razorpay = require("razorpay");
 const { admin, db } = require("../firebase");
 const pricingService = require("../services/pricingService");
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_SECRET,
-});
+// Initialize Razorpay only if credentials are available
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET,
+  });
+} else {
+  console.warn('Razorpay credentials not found. Payment functionality will be limited.');
+}
 
 /**
  * STEP 1: Quote endpoint
@@ -65,6 +71,14 @@ exports.createPayment = async (req, res) => {
       amountToPay = quote.split.later;
     } else if (paymentType === "full") {
       amountToPay = quote.pricing.totalPayable;
+    }
+
+    // Check if Razorpay is initialized
+    if (!razorpay) {
+      return res.status(503).json({ 
+        success: false, 
+        error: "Payment service not available. Razorpay credentials not configured." 
+      });
     }
 
     // Razorpay order

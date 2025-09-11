@@ -64,7 +64,6 @@ curl -X POST https://dibbzproject.vercel.app/api/auth/verify-token \
 The app now uses the **same Firebase project** as your dibbz-dine Flutter app:
 - **Project ID:** `dibbz-android-3af82`
 - **Auth Domain:** `dibbz-android-3af82.firebaseapp.com`
-- **API Key:** `AIzaSyA1kUyoe22YUUNhDQ8pEi9Zfe9dqIzQ0LU`
 
 ## 🎯 **New Authentication Flow:**
 

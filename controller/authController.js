@@ -1,22 +1,16 @@
 // Firebase Auth Controller for Google Sign-In and Email/Password Authentication
-// Temporarily disable Firebase admin for Vercel deployment
-// const { admin } = require('../firebase');
+const { admin, db } = require('../firebase');
 
-// Simplified Firebase Auth for Vercel deployment
-// For now, we'll create a mock implementation that works without Firebase admin
-
-// Mock Firebase token verification (for development)
+// Firebase token verification
 const verifyFirebaseToken = async (idToken) => {
   try {
-    // For now, just return a mock user object
-    // In production, you would verify the token with Firebase
-    console.log('Mock Firebase token verification for:', idToken);
-    
+    console.log('Verifying Firebase token with Admin SDK');
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
     return {
-      uid: 'mock_user_' + Date.now(),
-      email: 'user@example.com',
-      name: 'Test User',
-      picture: null
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      name: decodedToken.name || 'User',
+      picture: decodedToken.picture || null
     };
   } catch (error) {
     console.error('Error verifying Firebase token:', error);
@@ -24,10 +18,10 @@ const verifyFirebaseToken = async (idToken) => {
   }
 };
 
-// Mock user creation (for development)
+// User creation with Firestore
 const createOrUpdateUser = async (firebaseUser, role = 'customer') => {
   try {
-    console.log('Mock user creation/update for:', firebaseUser.uid, 'role:', role);
+    console.log('Creating/updating user for:', firebaseUser.uid, 'role:', role);
     
     const userData = {
       uid: firebaseUser.uid,
@@ -35,12 +29,16 @@ const createOrUpdateUser = async (firebaseUser, role = 'customer') => {
       name: firebaseUser.name || 'User',
       photoURL: firebaseUser.picture || null,
       role: role,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: admin.firestore.Timestamp.now(),
+      updatedAt: admin.firestore.Timestamp.now(),
       isActive: true
     };
 
-    console.log('Mock user data created:', userData);
+    // Save to Firestore
+    await db.collection('users').doc(firebaseUser.uid).set(userData, { merge: true });
+    console.log('User data saved to Firestore');
+
+    console.log('User data created:', userData);
     return userData;
   } catch (error) {
     console.error('Error creating/updating user:', error);

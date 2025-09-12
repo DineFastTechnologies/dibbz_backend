@@ -23,6 +23,9 @@ router.post("/seed", createRestaurant);
 // POST /restaurant - Create new restaurant (requires authentication)
 router.post("/", authenticate, createNewRestaurant);
 
+// POST /restaurant/public - Create new restaurant (no authentication required for setup)
+router.post("/public", createNewRestaurant);
+
 // GET /restaurant - Get all restaurants (publicly accessible)
 router.get("/", getAllRestaurants);
 router.get("/:id", getRestaurantById);

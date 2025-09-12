@@ -55,7 +55,10 @@ const createNewRestaurant = async (req, res) => {
       closingTime,
       capacity,
       priceRange,
-      isPureVeg
+      isPureVeg,
+      restaurantType,
+      paymentMethods,
+      features
     } = req.body;
 
     // Validate required fields
@@ -69,6 +72,7 @@ const createNewRestaurant = async (req, res) => {
       id: restaurantId,
       name,
       cuisine,
+      cuisineType: cuisine, // Add cuisineType for compatibility
       description: description || '',
       address,
       city: city || '',
@@ -81,6 +85,9 @@ const createNewRestaurant = async (req, res) => {
       capacity: capacity || 50,
       priceRange: priceRange || 'mid-range',
       isPureVeg: isPureVeg || false,
+      restaurantType: restaurantType || '',
+      paymentMethods: paymentMethods || [],
+      features: features || [],
       isActive: true,
       rating: 0,
       totalReviews: 0,
@@ -428,7 +435,8 @@ const checkRestaurantSetup = async (req, res) => {
     const userDoc = await db.collection('users').doc(userId).get();
     
     if (!userDoc.exists) {
-      return res.status(404).json({ error: "User not found" });
+      // User doesn't exist in database, so no restaurant setup
+      return res.json({ hasRestaurant: false });
     }
 
     const userData = userDoc.data();
@@ -443,7 +451,7 @@ const checkRestaurantSetup = async (req, res) => {
         const hasCompleteDetails = restaurantData?.name && 
                                  restaurantData?.address && 
                                  restaurantData?.phoneNumber &&
-                                 restaurantData?.cuisineType;
+                                 (restaurantData?.cuisineType || restaurantData?.cuisine);
         
         return res.json({ 
           hasRestaurant: true, 

@@ -1,0 +1,39 @@
+{
+  "restaurants": {
+    "mock_restaurant_1757738319729": {
+      "id": "mock_restaurant_1757738319729",
+      "name": "Test Restaurant",
+      "cuisine": "Italian",
+      "description": "A mock restaurant for testing",
+      "address": "123 Test St",
+      "city": "Mock City",
+      "state": "Mock State",
+      "zipCode": "12345",
+      "phoneNumber": "+1234567890",
+      "email": "info@mockrestaurant.com",
+      "openingTime": "09:00",
+      "closingTime": "22:00",
+      "capacity": 50,
+      "priceRange": "mid-range",
+      "isPureVeg": false,
+      "isActive": true,
+      "rating": 0,
+      "totalReviews": 0,
+      "createdAt": "2025-09-13T04:38:39.729Z",
+      "updatedAt": "2025-09-13T04:38:39.729Z",
+      "location": {
+        "lat": 0,
+        "lng": 0
+      },
+      "images": [],
+      "foodCategories": [
+        "Italian"
+      ],
+      "ownerId": "demo_user_123"
+    }
+  },
+  "userRestaurants": {
+    "demo_user_123": "mock_restaurant_1757738319729"
+  },
+  "lastUpdated": "2025-09-13T04:38:39.729Z"
+}

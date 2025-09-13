@@ -13,7 +13,7 @@ const {
   checkRestaurantSetup
 } = require("../controller/restaurantCRUD");
 
-//const { authenticate } = require("../middleware/authMiddleware"); 
+const { authenticate } = require("../middleware/auth"); 
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -21,7 +21,10 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post("/seed", createRestaurant);
 
 // POST /restaurant - Create new restaurant (requires authentication)
-router.post("/", createNewRestaurant);
+router.post("/", authenticate, createNewRestaurant);
+
+// POST /restaurant/public - Create new restaurant (no authentication required for setup)
+router.post("/public", createNewRestaurant);
 
 // GET /restaurant - Get all restaurants (publicly accessible)
 router.get("/", getAllRestaurants);

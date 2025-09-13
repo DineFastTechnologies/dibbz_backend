@@ -70,7 +70,7 @@ console.log("INDEX.JS: Custom context middleware (db, bucket, admin, auth helper
 
 // --- Import Route Modules ---
 console.log("INDEX.JS: Importing route modules...");
-let restaurantRoutes, userRoutes, menuRoutes, tableRoutes, locationUtilityRoutes, reviewRoutes, orderRoutes, bookingRoutes, paymentRoutes, cartRoutes, authRoutes, discountRoutes, categoryRoutes, interactionRoutes;
+let restaurantRoutes, userRoutes, menuRoutes, tableRoutes, locationUtilityRoutes, reviewRoutes, orderRoutes, bookingRoutes, paymentRoutes, cartRoutes, authRoutes, discountRoutes, categoryRoutes, interactionRoutes, staffRoutes;
 
 try {
   restaurantRoutes = require("./routes/restaurantRoutes");
@@ -87,6 +87,7 @@ try {
   discountRoutes = require("./routes/discountRoutes");
   categoryRoutes = require("./routes/categories");
   interactionRoutes = require("./routes/interactions");
+  staffRoutes = require("./routes/staff");
   console.log("INDEX.JS: All route modules imported successfully");
 } catch (error) {
   console.error("INDEX.JS: Error importing route modules:", error.message);
@@ -95,7 +96,7 @@ try {
   const express = require("express");
   const mockRouter = express.Router();
   mockRouter.get("/", (req, res) => res.json({ message: "Mock route", error: "Route module failed to load" }));
-  restaurantRoutes = userRoutes = menuRoutes = tableRoutes = locationUtilityRoutes = reviewRoutes = orderRoutes = bookingRoutes = paymentRoutes = cartRoutes = authRoutes = discountRoutes = categoryRoutes = interactionRoutes = mockRouter;
+  restaurantRoutes = userRoutes = menuRoutes = tableRoutes = locationUtilityRoutes = reviewRoutes = orderRoutes = bookingRoutes = paymentRoutes = cartRoutes = authRoutes = discountRoutes = categoryRoutes = interactionRoutes = staffRoutes = mockRouter;
 }
 
 // --- Register Routes with Middleware ---
@@ -114,6 +115,7 @@ app.use('/api/auth', authRoutes);
 app.use("/api/discounts", discountRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/interactions", interactionRoutes);
+app.use("/api/restaurants", staffRoutes);
 console.log("INDEX.JS: All routes registered.");
 
 // Root endpoint for a basic health check

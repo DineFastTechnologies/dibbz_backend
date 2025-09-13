@@ -30,10 +30,42 @@
         "Italian"
       ],
       "ownerId": "demo_user_123"
+    },
+    "mock_restaurant_1757747405618": {
+      "id": "mock_restaurant_1757747405618",
+      "name": "Nonch",
+      "cuisine": "Continental",
+      "description": "Best in town",
+      "address": "bennett",
+      "city": "Gautam Buddha Nagar",
+      "state": "Uttar Pradesh",
+      "zipCode": "201310",
+      "phoneNumber": "8920729207",
+      "email": "tanishkvarwork@gmail.com",
+      "openingTime": "09:00",
+      "closingTime": "22:00",
+      "capacity": 50,
+      "priceRange": "mid-range",
+      "isPureVeg": false,
+      "isActive": true,
+      "rating": 0,
+      "totalReviews": 0,
+      "createdAt": "2025-09-13T07:10:05.618Z",
+      "updatedAt": "2025-09-13T07:10:05.618Z",
+      "location": {
+        "lat": 0,
+        "lng": 0
+      },
+      "images": [],
+      "foodCategories": [
+        "Continental"
+      ],
+      "ownerId": "LpNzBXSjjrbS6Ymo1pMWOtXgd8A2"
     }
   },
   "userRestaurants": {
-    "demo_user_123": "mock_restaurant_1757738319729"
+    "demo_user_123": "mock_restaurant_1757738319729",
+    "LpNzBXSjjrbS6Ymo1pMWOtXgd8A2": "mock_restaurant_1757747405618"
   },
-  "lastUpdated": "2025-09-13T04:38:39.729Z"
+  "lastUpdated": "2025-09-13T07:10:05.619Z"
 }
